@@ -3,168 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Studio Games | Portfólio de Guilherme Silva</title>
+    <title>Visual Studio Games | Guilherme Silva</title>
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4389870681468404"
-            crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4389870681468404" crossorigin="anonymous"></script>
 
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --border-color: #30363d;
-            --text-main: #c9d1d9;
-            --text-accent: #58a6ff;
-            --btn-green: #238636;
-            --btn-pix: #32bcad;
+            --bg: #0d1117;
+            --card: #161b22;
+            --accent: #58a6ff;
+            --green: #238636;
         }
-
-        body {
-            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            text-align: center;
-            padding: 40px 20px;
-            margin: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        h1 { color: var(--text-accent); margin-bottom: 5px; font-size: 2.5rem; }
-        .subtitle { color: #8b949e; margin-bottom: 30px; font-size: 1.1rem; }
-
-        .ads-container {
-            margin: 20px 0;
-            padding: 10px;
-            background: #21262d;
-            border-radius: 8px;
-            border: 1px dashed #484f58;
-            min-height: 100px;
-        }
-
-        .bio { line-height: 1.6; margin: 25px 0; }
-
-        /* Galeria de Jogos */
-        .game-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .game-card {
-            background: #21262d;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .game-card h3 { color: var(--text-accent); margin: 10px 0; font-size: 1.1rem; }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            padding: 12px 28px;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            transition: 0.2s;
-            cursor: pointer;
-            border: none;
-            font-size: 1rem;
-        }
-
-        .btn-github { background-color: var(--btn-green); }
-        .btn-github:hover { background-color: #2ea043; }
-
-        .btn-pix { background-color: var(--btn-pix); color: #0d1117; }
-        .btn-pix:hover { background-color: #45d6c6; }
-
-        .support-section {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .qr-code {
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            display: inline-block;
-            margin: 15px 0;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; text-align: center; padding: 40px 20px; margin: 0; }
+        .container { max-width: 800px; margin: auto; background: var(--card); padding: 30px; border-radius: 12px; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: var(--accent); font-size: 2.5rem; margin-bottom: 10px; }
+        .subtitle { color: #8b949e; margin-bottom: 30px; }
+        .ads-box { margin: 20px 0; padding: 10px; background: #21262d; border: 1px dashed #484f58; min-height: 100px; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+        .game-card { background: #21262d; padding: 20px; border-radius: 8px; border: 1px solid #30363d; transition: 0.3s; }
+        .game-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .btn { display: inline-block; padding: 12px 24px; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 10px; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-gh { background: var(--green); }
+        .btn-gh:hover { background: #2ea043; }
+        .btn-pix { background: #32bcad; color: #0d1117; }
+        .btn-pix:hover { background: #45d6c6; }
+        .qr-code { background: white; padding: 10px; border-radius: 8px; margin-top: 20px; display: inline-block; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Visual Studio Games</h1>
-        <p class="subtitle">Desenvolvimento de Software, Cyber Security & Estratégias de Trading</p>
+        <p class="subtitle">Desenvolvimento de Software, Cyber Security & Trading</p>
 
-        <div class="ads-container">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-4389870681468404"
-                 data-ad-slot="5775198406"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
+        <div class="ads-box">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4389870681468404" data-ad-slot="5775198406" data-ad-format="auto" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-        <div class="bio">
-            <p>Olá, eu sou <strong>Guilherme Silva</strong> (Kovaliosky DeV).</p>
-            <p>Especialista em Python, GDevelop e automação de sistemas.</p>
-        </div>
+        <p>Olá, eu sou <strong>Guilherme Silva</strong> (Kovaliosky DeV). Especialista em Python e automação.</p>
 
-        <h2 style="color: var(--text-accent); font-size: 1.5rem;">Meus Jogos (Arcade)</h2>
-        <div class="game-gallery">
-            <div class="game-card">
-                <h3>Neon Snaker</h3>
-                <p style="font-size: 0.8rem; color: #8b949e;">Um clássico reimaginado em 2D.</p>
-            </div>
+        <div class="gallery">
             <div class="game-card">
                 <h3>Pedro Raccoon</h3>
-                <p style="font-size: 0.8rem; color: #8b949e;">Aventura arcade rítmica.</p>
+                <p style="font-size: 0.8rem; color: #8b949e;">Aventura rítmica 2D em GDevelop.</p>
+            </div>
+            <div class="game-card">
+                <h3>Neon Snaker</h3>
+                <p style="font-size: 0.8rem; color: #8b949e;">O clássico arcade com visual moderno.</p>
             </div>
         </div>
 
         <div class="btn-group">
-            <a href="https://github.com/VisualStudioandSecurity" class="btn btn-github" target="_blank">Projetos GitHub</a>
-            <button class="btn btn-pix" onclick="copyPix()">Chave PIX (CPF)</button>
+            <a href="https://github.com/VisualStudioandSecurity" class="btn btn-gh" target="_blank">Ver Projetos no GitHub</a>
+            <button onclick="copyPix()" class="btn btn-pix">Copiar Chave PIX (CPF)</button>
         </div>
 
-        <div class="support-section">
-            <p style="color: var(--text-accent); font-weight: bold;">Apoie o Desenvolvimento</p>
+        <div style="margin-top: 40px; border-top: 1px solid #30363d; padding-top: 20px;">
+            <p style="color: var(--accent); font-weight: bold;">Apoie o Desenvolvimento</p>
             <div class="qr-code">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=10267545266" alt="QR Code PIX">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=10267545266" alt="QR Code PIX">
             </div>
-            <p style="font-size: 0.85rem; color: #8b949e;">Sua contribuição ajuda a manter as ferramentas ativas.</p>
+            <p style="font-size: 0.8rem; color: #8b949e; margin-top: 10px;">Chave: 10267545266</p>
         </div>
     </div>
 
     <script>
         function copyPix() {
-            const pixKey = "10267545266";
-            navigator.clipboard.writeText(pixKey).then(() => {
-                alert("Chave PIX copiada! Obrigado pelo apoio.");
+            navigator.clipboard.writeText("10267545266").then(() => {
+                alert("Chave PIX copiada com sucesso! Obrigado pelo apoio.");
             });
         }
     </script>
-
 </body>
 </html>

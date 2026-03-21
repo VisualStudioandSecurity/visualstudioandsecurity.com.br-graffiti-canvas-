@@ -3,8 +3,8 @@
 <head>
     <title>Space Invaders - VS Games</title>
     <style>
-        body { background: #000; color: #0f0; text-align: center; font-family: 'Courier New', monospace; }
-        canvas { border: 2px solid #58a6ff; background: #050505; margin-top: 20px; }
+        body { background: #000; color: #0f0; text-align: center; font-family: 'Courier New', monospace; overflow: hidden; }
+        canvas { border: 2px solid #58a6ff; background: #050505; margin-top: 20px; box-shadow: 0 0 20px #58a6ff; }
     </style>
 </head>
 <body>
@@ -17,9 +17,9 @@
         function draw() {
             ctx.clearRect(0,0,400,400);
             ctx.fillStyle = '#0f0';
-            ctx.fillRect(x, 370, 40, 20); 
+            ctx.fillRect(x, 370, 40, 20); // Nave
             ctx.fillStyle = '#f00';
-            ctx.fillRect(50, 50, 30, 20); 
+            for(let i=0; i<5; i++) ctx.fillRect(50 + (i*60), 50, 30, 20); // Inimigos
             requestAnimationFrame(draw);
         }
         document.onkeydown = (e) => {

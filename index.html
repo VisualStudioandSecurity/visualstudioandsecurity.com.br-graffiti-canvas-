@@ -6,34 +6,23 @@
     <title>Visual Studio Games | Guilherme Silva</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 filter=%22drop-shadow(0 0 10px %2300f2ff)%22>🔒</text></svg>">
-
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4389870681468404" crossorigin="anonymous"></script>
 
     <style>
-        :root { 
-            --bg: #0d1117; --card: #161b22; --accent: #58a6ff; 
-            --green: #238636; --gray: #8b949e; 
-            --neon: #00f2ff; /* Ciano Neon (cite: image_7.png) */
+        :root { --bg: #0d1117; --card: #161b22; --accent: #58a6ff; --neon: #00f2ff; --gray: #8b949e; }
+        
+        body { 
+            font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: white; 
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; text-align: center;
         }
 
-        /* Centralização Total Modern */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: white;
-            margin: 0; padding: 50px 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center;
-            min-height: 100vh;
-        }
+        .container { width: 90%; max-width: 1000px; margin: 50px auto; }
 
-        .container { width: 90%; max-width: 900px; margin: auto; }
-
-        /* --- O LETREIRO NEON (cite: image_7.png) --- */
-        h1 {
-            font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px;
-            animation: neonPulse 1.5s ease-in-out infinite alternate;
-            margin-bottom: 10px;
+        /* Letreiro Neon */
+        h1 { 
+            font-size: 2.8rem; text-transform: uppercase; letter-spacing: 3px;
+            animation: neonPulse 1.5s ease-in-out infinite alternate; 
+            margin-bottom: 5px;
         }
 
         @keyframes neonPulse {
@@ -41,40 +30,92 @@
             to { text-shadow: 0 0 5px #fff, 0 0 15px var(--accent), 0 0 25px var(--accent); color: var(--neon); }
         }
 
-        h2 { color: var(--neon); font-size: 1.2rem; margin-top: 30px; }
-        
-        /* Centralizando textos de descrição (cite: image_0.png) */
-        p { color: var(--gray); font-size: 1em; line-height: 1.6; max-width: 600px; margin: 0 auto 15px auto; }
+        .section-title { color: var(--neon); font-size: 1.2rem; margin: 40px 0 20px; text-transform: uppercase; }
 
-        /* --- Galeria de Cards com Thumbnail (cite: image_1.png) --- */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px; margin-top: 40px;
+        /* Galeria de Projetos */
+        .gallery { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; margin-top: 20px; 
         }
 
-        /* Efeito de Link Inteiro no Card */
         .game-link { text-decoration: none; color: inherit; display: block; transition: 0.3s; }
-        .game-link:hover { transform: translateY(-8px); }
-
-        .game-card {
-            background: var(--card); border-radius: 12px;
-            border: 1px solid #30363d; overflow: hidden;
-            display: flex; flex-direction: column; height: 100%;
+        .game-card { 
+            background: var(--card); border: 1px solid #30363d; border-radius: 12px; 
+            overflow: hidden; height: 100%; display: flex; flex-direction: column;
         }
 
-        /* Ajuste do Efeito de Destaque Neon (cite: image_8.png) */
-        .game-link:hover .game-card {
-            border-color: var(--neon);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-        }
+        .game-link:hover .game-card { transform: translateY(-8px); border-color: var(--neon); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+        .game-card img { width: 100%; height: 180px; object-fit: cover; background: #000; }
 
-        /* Tamanho e Fallback das Thumbs (cite: image_11.png) */
-        .game-card img {
-            width: 100%; height: 180px; object-fit: cover;
-            border-bottom: 1px solid #30363d; background: #000;
-        }
+        /* Botões */
+        .btn-group { margin: 30px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .btn { padding: 12px 28px; border-radius: 6px; font-weight: bold; text-decoration: none; color: white; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-github { background: #238636; }
+        .btn-pix { background: #32bcad; color: #0d1117; }
 
-        .card-content { padding: 15px; }
-        .card-content h3 { margin: 10px 0; color: var(--neon); font-size: 1.2rem; }
-        .card-content p { color:
+        /* Rodapé */
+        footer { width: 100%; padding: 40px 0; border-top: 1px solid #30363d; background: #090c10; display: flex; flex-direction: column; align-items: center; }
+        .system-log { border: 1px solid var(--neon); padding: 8px 20px; font-family: monospace; border-radius: 5px; color: var(--neon); margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Visual Studio Games</h1>
+        <p style="color: var(--gray); font-weight: bold;">Senior Developer & Cyber Security</p>
+
+        <div style="margin: 20px 0;">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4389870681468404" data-ad-slot="5775198406" data-ad-format="auto"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="section-title">[01] Sobre o Autor</div>
+        <p style="max-width: 650px; margin: 0 auto; line-height: 1.6; color: var(--gray);">
+            Especialista em Python, GDevelop e Cyber Security. Este portal centraliza meus projetos autorais de automação e jogos, focando em código limpo, seguro e performático.
+        </p>
+
+        <div class="btn-group">
+            <a href="https://github.com/VisualStudioAndSecurity" class="btn btn-github" target="_blank">Ver Repositórios</a>
+            <button onclick="copyPix()" class="btn btn-pix">Apoiar via PIX</button>
+        </div>
+
+        <div class="section-title">[02] Projetos</div>
+        <div class="gallery">
+            <a href="./neon-snaker/" class="game-link">
+                <div class="game-card">
+                    <img src="thumb_neon_snaker.jpg" alt="Neon Snaker">
+                    <div style="padding: 15px;"><h3>Neon Snaker</h3><p style="font-size: 0.8rem; color: var(--gray);">Arcade retro com efeitos modernos.</p></div>
+                </div>
+            </a>
+            <a href="./cyber-defense/" class="game-link">
+                <div class="game-card">
+                    <img src="thumb_cyber_defense.jpg" alt="Cyber Defense">
+                    <div style="padding: 15px;"><h3>Cyber Defense</h3><p style="font-size: 0.8rem; color: var(--gray);">Simulador de defesa de dados.</p></div>
+                </div>
+            </a>
+            <a href="./breakout/" class="game-link">
+                <div class="game-card">
+                    <img src="thumb_breakout.jpg" alt="Breakout">
+                    <div style="padding: 15px;"><h3>Breakout Retro</h3><p style="font-size: 0.8rem; color: var(--gray);">O clássico reimaginado.</p></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="section-title">[03] Privacidade</div>
+        <p style="font-size: 0.9rem; color: var(--gray);">Utilizamos cookies para anúncios via Google AdSense.</p>
+    </div>
+
+    <footer>
+        <div class="system-log">[SYSTEM_LOG]: 8145 VISITAS_REAIS</div>
+        <div style="color: var(--gray); font-size: 0.9rem;">&copy; 2026 Guilherme Silva | Visual Studio Games</div>
+    </footer>
+
+    <script>
+        function copyPix() {
+            const pixKey = "10267545266";
+            navigator.clipboard.writeText(pixKey).then(() => alert("Chave PIX copiada!"));
+        }
+    </script>
+    <script data-goatcounter="https://kovalioskygoatcountercom.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

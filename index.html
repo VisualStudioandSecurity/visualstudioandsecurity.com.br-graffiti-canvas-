@@ -6,6 +6,7 @@
     <title>Visual Studio Games | Guilherme Silva</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 filter=%22drop-shadow(0 0 10px %2300f2ff)%22>🔒</text></svg>">
+    
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4389870681468404" crossorigin="anonymous"></script>
 
     <style>
@@ -18,7 +19,6 @@
 
         .container { width: 90%; max-width: 1000px; margin: 50px auto; }
 
-        /* Letreiro Neon */
         h1 { 
             font-size: 2.8rem; text-transform: uppercase; letter-spacing: 3px;
             animation: neonPulse 1.5s ease-in-out infinite alternate; 
@@ -32,7 +32,6 @@
 
         .section-title { color: var(--neon); font-size: 1.2rem; margin: 40px 0 20px; text-transform: uppercase; }
 
-        /* Galeria de Projetos */
         .gallery { 
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
             gap: 25px; margin-top: 20px; 
@@ -47,15 +46,15 @@
         .game-link:hover .game-card { transform: translateY(-8px); border-color: var(--neon); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
         .game-card img { width: 100%; height: 180px; object-fit: cover; background: #000; }
 
-        /* Botões */
         .btn-group { margin: 30px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .btn { padding: 12px 28px; border-radius: 6px; font-weight: bold; text-decoration: none; color: white; border: none; cursor: pointer; transition: 0.3s; }
         .btn-github { background: #238636; }
         .btn-pix { background: #32bcad; color: #0d1117; }
 
-        /* Rodapé */
         footer { width: 100%; padding: 40px 0; border-top: 1px solid #30363d; background: #090c10; display: flex; flex-direction: column; align-items: center; }
         .system-log { border: 1px solid var(--neon); padding: 8px 20px; font-family: monospace; border-radius: 5px; color: var(--neon); margin-bottom: 15px; }
+        
+        .ads-box { margin: 20px 0; width: 100%; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -64,7 +63,7 @@
         <h1>Visual Studio Games</h1>
         <p style="color: var(--gray); font-weight: bold;">Senior Developer & Cyber Security</p>
 
-        <div style="margin: 20px 0;">
+        <div class="ads-box">
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4389870681468404" data-ad-slot="5775198406" data-ad-format="auto"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
@@ -101,6 +100,11 @@
             </a>
         </div>
 
+        <div class="ads-box">
+            <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-4389870681468404" data-ad-slot="5680930687"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
         <div class="section-title">[03] Privacidade</div>
         <p style="font-size: 0.9rem; color: var(--gray);">Utilizamos cookies para anúncios via Google AdSense.</p>
     </div>
@@ -113,7 +117,17 @@
     <script>
         function copyPix() {
             const pixKey = "10267545266";
-            navigator.clipboard.writeText(pixKey).then(() => alert("Chave PIX copiada!"));
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(pixKey).then(() => alert("Chave PIX copiada!"));
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = pixKey;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert("Chave PIX copiada!");
+            }
         }
     </script>
     <script data-goatcounter="https://kovalioskygoatcountercom.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>

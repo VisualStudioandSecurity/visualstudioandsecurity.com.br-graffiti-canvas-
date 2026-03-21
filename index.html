@@ -12,23 +12,24 @@
     <style>
         :root { 
             --bg: #0d1117; --card: #161b22; --accent: #58a6ff; 
-            --green: #238636; --gray: #8b949e; --neon: #00f2ff;
+            --green: #238636; --gray: #8b949e; 
+            --neon: #00f2ff; /* Ciano Neon (cite: image_7.png) */
         }
 
-        /* Centralização Global */
+        /* Centralização Total Modern */
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
             color: white;
             margin: 0; padding: 50px 0;
-            display: flex; flex-direction: column; align-items: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center;
             min-height: 100vh;
         }
 
-        .container { width: 90%; max-width: 900px; }
+        .container { width: 90%; max-width: 900px; margin: auto; }
 
-        /* Letreiro Neon Pulsante */
+        /* --- O LETREIRO NEON (cite: image_7.png) --- */
         h1 {
             font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px;
             animation: neonPulse 1.5s ease-in-out infinite alternate;
@@ -40,17 +41,21 @@
             to { text-shadow: 0 0 5px #fff, 0 0 15px var(--accent), 0 0 25px var(--accent); color: var(--neon); }
         }
 
-        /* Galeria e Cards Corrigidos */
+        h2 { color: var(--neon); font-size: 1.2rem; margin-top: 30px; }
+        
+        /* Centralizando textos de descrição (cite: image_0.png) */
+        p { color: var(--gray); font-size: 1em; line-height: 1.6; max-width: 600px; margin: 0 auto 15px auto; }
+
+        /* --- Galeria de Cards com Thumbnail (cite: image_1.png) --- */
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px; margin-top: 40px;
-            width: 100%;
         }
 
-        .game-link {
-            text-decoration: none; color: inherit; display: block; transition: 0.3s;
-        }
+        /* Efeito de Link Inteiro no Card */
+        .game-link { text-decoration: none; color: inherit; display: block; transition: 0.3s; }
+        .game-link:hover { transform: translateY(-8px); }
 
         .game-card {
             background: var(--card); border-radius: 12px;
@@ -58,12 +63,13 @@
             display: flex; flex-direction: column; height: 100%;
         }
 
+        /* Ajuste do Efeito de Destaque Neon (cite: image_8.png) */
         .game-link:hover .game-card {
-            transform: translateY(-8px);
             border-color: var(--neon);
             box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
         }
 
+        /* Tamanho e Fallback das Thumbs (cite: image_11.png) */
         .game-card img {
             width: 100%; height: 180px; object-fit: cover;
             border-bottom: 1px solid #30363d; background: #000;
@@ -71,60 +77,4 @@
 
         .card-content { padding: 15px; }
         .card-content h3 { margin: 10px 0; color: var(--neon); font-size: 1.2rem; }
-        .card-content p { color: var(--gray); font-size: 0.9rem; margin: 0; }
-
-        /* Botões */
-        .btn-group { margin: 40px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-        .btn {
-            padding: 12px 24px; border-radius: 6px; font-weight: bold;
-            text-decoration: none; color: white; cursor: pointer; border: none; transition: 0.3s;
-        }
-        .btn-github { background: var(--green); }
-        .btn-pix { background: #32bcad; color: #0d1117; }
-
-        /* Rodapé Centralizado */
-        footer {
-            margin-top: auto; width: 100%; padding: 40px 0;
-            border-top: 1px solid #30363d; background: #090c10;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        .system-log {
-            border: 1px solid var(--neon); padding: 10px 20px;
-            font-family: monospace; border-radius: 5px; color: var(--neon);
-            margin-bottom: 15px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>Visual Studio Games</h1>
-        <p style="color: var(--gray); font-weight: bold;">Senior Developer & Cyber Security</p>
-
-        <div class="gallery">
-            
-            <a href="./neon-snaker/" class="game-link">
-                <div class="game-card">
-                    <img src="thumb_neon_snaker.jpg" alt="Neon Snaker">
-                    <div class="card-content">
-                        <h3>Neon Snaker</h3>
-                        <p>Arcade retro com efeitos visuais modernos.</p>
-                    </div>
-                </div>
-            </a>
-
-            <a href="./cyber-defense/" class="game-link">
-                <div class="game-card">
-                    <img src="thumb_cyber_defense.jpg" alt="Cyber Defense">
-                    <div class="card-content">
-                        <h3>Cyber Defense</h3>
-                        <p>Simulador de defesa e proteção de dados.</p>
-                    </div>
-                </div>
-            </a>
-
-            <a href="./breakout/" class="game-link">
-                <div class="game-card">
-                    <img src="thumb_breakout.
-                                
+        .card-content p { color:

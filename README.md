@@ -1,28 +1,13 @@
-# ⚡ Guilherme Kovaliosky | Senior Developer & Security Specialist
+### 📊 Estatísticas da Organização Visual Studio & Security
+
+Estamos focados em desenvolvimento e segurança agressiva. Abaixo, nossas principais linguagens e atividades.
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=guilherme-abadio&show_icons=true&theme=tokyonight&count_private=true" alt="Estatísticas de Guilherme" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=VisualStudioandSecurity&layout=compact&theme=tokyonight&hide=html,css&count_private=true" alt="Top Langs - VS Games & Security" />
 </p>
 
-### 🚀 Sobre Mim
-Desenvolvedor Full Stack Sênior focado em **automação de software** e **defesa cibernética**. Atualmente liderando a **Visual Studio Games**, onde integro lógica de trading algorítmico com interfaces de alta performance.
-
-- 🛡️ **Cyber Security:** Especialista em Pentesting e Auditoria de Segurança (OWASP).
-- 🤖 **Automação:** Desenvolvimento de Bots em Python (CCXT) e Pipelines de Dados.
-- 📈 **Trading:** Analista técnico de ativos digitais e criptografia financeira.
-
-### 🛠️ Tech Stack & Tools
-<p align="left">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
-  <img src="https://img.shields.io/badge/Kali_Linux-557C94?style=for-the-badge&logo=kali-linux&logoColor=white" />
-  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" />
-</p>
-
-### 📊 Linguagens que mais utilizo
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=guilherme-abadio&layout=compact&theme=tokyonight&hide=html,css" alt="Top Langs" />
+  <img src="https://github-readme-stats.vercel.app/api?username=VisualStudioandSecurity&show_icons=true&theme=tokyonight&hide_rank=true" alt="Estatísticas VS Games & Security" />
 </p>
 
 ---
-📫 **Como me encontrar:** [LinkedIn](https://www.linkedin.com/in/guilherme-abadio-b640103b9/) | [Portal Oficial](https://visualstudiogameandsecurity.github.io/)

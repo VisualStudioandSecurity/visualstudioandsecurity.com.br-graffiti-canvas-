@@ -15,191 +15,156 @@
             --green: #238636; --gray: #8b949e; --neon: #00f2ff;
         }
 
-        /* Centralização e Design Moderno */
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
-            color: white;
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center;
-            text-align: center;
-            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: white;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;
+            text-align: center; min-height: 100vh;
         }
 
-        .container { width: 90%; max-width: 1000px; margin: 50px auto; }
+        .container { width: 92%; max-width: 1000px; margin: 30px auto; }
 
-        /* Letreiro Neon Pulsante */
         h1 {
-            font-size: 2.8rem; text-transform: uppercase; letter-spacing: 3px;
+            font-size: 2.2rem; text-transform: uppercase; letter-spacing: 2px;
             animation: neonPulse 1.5s ease-in-out infinite alternate;
             margin-bottom: 5px;
         }
 
         @keyframes neonPulse {
-            from { text-shadow: 0 0 10px #fff, 0 0 20px var(--neon), 0 0 30px var(--neon); color: #fff; }
-            to { text-shadow: 0 0 5px #fff, 0 0 15px var(--accent), 0 0 25px var(--accent); color: var(--neon); }
+            from { text-shadow: 0 0 10px #fff, 0 0 20px var(--neon); color: #fff; }
+            to { text-shadow: 0 0 5px #fff, 0 0 15px var(--accent); color: var(--neon); }
         }
 
-        .section-title { color: var(--neon); font-size: 1.2rem; margin: 40px 0 20px; text-transform: uppercase; letter-spacing: 1px; }
+        .section-title { color: var(--neon); font-size: 1.1rem; margin: 30px 0 15px; text-transform: uppercase; }
 
-        /* Galeria de Projetos (Grid Responsivo) */
+        /* Galeria Ajustada para Celular */
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px; margin-top: 20px;
-            width: 100%;
+            gap: 20px; width: 100%;
         }
 
         .game-link { text-decoration: none; color: inherit; display: block; transition: 0.3s; }
         
         .game-card {
-            background: var(--card); border-radius: 12px;
-            border: 1px solid #30363d; overflow: hidden;
-            display: flex; flex-direction: column; height: 100%;
+            background: var(--card); border-radius: 12px; border: 1px solid #30363d;
+            overflow: hidden; display: flex; flex-direction: column; height: 100%;
         }
 
-        .game-link:hover .game-card {
-            transform: translateY(-8px);
-            border-color: var(--neon);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-        }
+        .game-link:active, .game-link:hover { transform: scale(0.98); border-color: var(--neon); }
 
+        /* Fallback para imagens que não carregam */
         .game-card img {
-            width: 100%; height: 180px; object-fit: cover;
+            width: 100%; height: 160px; object-fit: cover;
             border-bottom: 1px solid #30363d; background: #000;
         }
 
-        .card-content { padding: 15px; flex-grow: 1; }
-        .card-content h3 { margin: 10px 0; color: var(--neon); font-size: 1.2rem; }
-        .card-content p { color: var(--gray); font-size: 0.9rem; margin: 0; }
+        .card-content { padding: 15px; }
+        .card-content h3 { margin: 5px 0; color: var(--neon); font-size: 1.1rem; }
+        .card-content p { color: var(--gray); font-size: 0.85rem; margin: 0; }
 
-        /* Botões Estilizados */
-        .btn-group { margin: 30px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        /* Botões Mobile-Friendly */
+        .btn-group { margin: 25px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .btn {
-            padding: 12px 28px; border-radius: 6px; font-weight: bold;
-            text-decoration: none; color: white; cursor: pointer; border: none; transition: 0.3s;
+            padding: 12px 20px; border-radius: 6px; font-weight: bold;
+            text-decoration: none; color: white; cursor: pointer; border: none; flex: 1; min-width: 140px;
         }
         .btn-github { background: var(--green); }
         .btn-pix { background: #32bcad; color: #0d1117; }
 
-        /* Rodapé de Sistema */
         footer {
-            width: 100%; padding: 40px 0;
+            width: 100%; padding: 30px 0; margin-top: 40px;
             border-top: 1px solid #30363d; background: #090c10;
-            display: flex; flex-direction: column; align-items: center;
         }
 
         .system-log {
-            border: 1px solid var(--neon); padding: 8px 20px;
-            font-family: monospace; border-radius: 5px; color: var(--neon);
-            margin-bottom: 15px; font-size: 0.9rem;
+            border: 1px solid var(--neon); padding: 5px 15px;
+            font-family: monospace; border-radius: 4px; color: var(--neon);
+            display: inline-block; margin-bottom: 10px; font-size: 0.8rem;
         }
 
-        .ads-box { margin: 20px 0; width: 100%; min-height: 100px; }
+        /* Responsividade Extra */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .container { margin: 20px auto; }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Visual Studio Games</h1>
-        <p style="color: var(--gray); font-weight: bold; letter-spacing: 1px;">Senior Developer & Cyber Security</p>
+        <p style="color: var(--gray); font-weight: bold; font-size: 0.9rem;">Senior Developer & Cyber Security</p>
 
-        <div class="ads-box">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-4389870681468404"
-                 data-ad-slot="5775198406"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
+        <div style="margin: 20px 0; min-height: 100px;">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4389870681468404" data-ad-slot="5775198406" data-ad-format="auto" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-        <div class="section-title">[01] Sobre o Autor</div>
-        <p style="max-width: 700px; margin: 0 auto; line-height: 1.6; color: var(--gray);">
-            Especialista em Python, GDevelop e Cyber Security. Este portal centraliza meus projetos autorais de automação e jogos, focando em código limpo, seguro e performático.
+        <div class="section-title">[01] Sobre</div>
+        <p style="font-size: 0.9rem; color: var(--gray); line-height: 1.5; padding: 0 10px;">
+            Projetos autorais de automação e jogos focados em código limpo e seguro.
         </p>
 
         <div class="btn-group">
-            <a href="https://github.com/VisualStudioAndSecurity" class="btn btn-github" target="_blank">Repositórios GitHub</a>
-            <button onclick="copyPix()" class="btn btn-pix">Apoiar via PIX</button>
+            <a href="https://github.com/VisualStudioAndSecurity" class="btn btn-github" target="_blank">GitHub</a>
+            <button onclick="copyPix()" class="btn btn-pix">Apoiar PIX</button>
         </div>
 
-        <div class="section-title">[02] Projetos</div>
+        <div class="section-title">[02] Jogos</div>
         <div class="gallery">
             
-            <a href="./neon-snaker/" class="game-link">
+            <a href="neon-snaker/" class="game-link">
                 <div class="game-card">
-                    <img src="thumb_neon_snaker.jpg" alt="Neon Snaker">
+                    <img src="thumb_neon_snaker.jpg" onerror="this.src='https://via.placeholder.com/300x160/161b22/00f2ff?text=Neon+Snaker'" alt="Neon Snaker">
                     <div class="card-content">
                         <h3>Neon Snaker</h3>
-                        <p>Arcade retro com estética neon e jogabilidade fluida.</p>
+                        <p>Clique para iniciar o jogo.</p>
                     </div>
                 </div>
             </a>
 
-            <a href="./cyber-defense/" class="game-link">
+            <a href="cyber-defense/" class="game-link">
                 <div class="game-card">
-                    <img src="thumb_cyber_defense.jpg" alt="Cyber Defense">
+                    <img src="thumb_cyber_defense.jpg" onerror="this.src='https://via.placeholder.com/300x160/161b22/00f2ff?text=Cyber+Defense'" alt="Cyber Defense">
                     <div class="card-content">
                         <h3>Cyber Defense</h3>
-                        <p>Simulador técnico focado em defesa de redes e firewalls.</p>
+                        <p>Clique para iniciar o jogo.</p>
                     </div>
                 </div>
             </a>
 
-            <a href="./breakout/" class="game-link">
+            <a href="breakout/" class="game-link">
                 <div class="game-card">
-                    <img src="thumb_breakout.jpg" alt="Breakout Retro">
+                    <img src="thumb_breakout.jpg" onerror="this.src='https://via.placeholder.com/300x160/161b22/00f2ff?text=Breakout'" alt="Breakout">
                     <div class="card-content">
                         <h3>Breakout Retro</h3>
-                        <p>O clássico de quebrar blocos com visual atualizado.</p>
+                        <p>Clique para iniciar o jogo.</p>
                     </div>
                 </div>
             </a>
 
         </div>
 
-        <div class="ads-box">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-format="autorelaxed"
-                 data-ad-client="ca-pub-4389870681468404"
-                 data-ad-slot="5680930687"></ins>
+        <div style="margin: 30px 0;">
+            <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-4389870681468404" data-ad-slot="5680930687"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
         <div class="section-title">[03] Privacidade</div>
-        <p style="font-size: 0.85rem; color: var(--gray); max-width: 600px; margin: 0 auto;">
-            Respeitamos sua privacidade. Utilizamos cookies para personalizar anúncios via Google AdSense e analisar o tráfego com ferramentas de analytics seguras.
-        </p>
+        <p style="font-size: 0.75rem; color: var(--gray);">Cookies ativos para anúncios AdSense.</p>
     </div>
 
     <footer>
-        <div class="system-log">[SYSTEM_LOG]: 8145 VISITAS_REAIS</div>
-        <div style="color: var(--gray); font-size: 0.9rem;">&copy; 2026 Guilherme Silva | Visual Studio Games</div>
-        <div style="font-size: 0.7rem; color: #484f58; margin-top: 10px; letter-spacing: 2px;">
-            ENCRYPTED CONNECTION | FIREWALL ACTIVE
-        </div>
+        <div class="system-log">[SYSTEM_LOG]: 8145 VISITAS</div>
+        <div style="color: var(--gray); font-size: 0.8rem;">&copy; 2026 Guilherme Silva</div>
     </footer>
 
     <script>
         function copyPix() {
             const pixKey = "10267545266";
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(pixKey).then(() => alert("Chave PIX copiada! Valeu pelo apoio."));
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = pixKey;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert("Chave PIX copiada!");
-            }
+            navigator.clipboard.writeText(pixKey).then(() => alert("PIX Copiado!"));
         }
     </script>
-    
     <script data-goatcounter="https://kovalioskygoatcountercom.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-
 </body>
 </html>

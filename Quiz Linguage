@@ -1,1 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard Language Lab | Visual Studio Games</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon: #00f2ff; --bg: #0f172a; --card: #1e293b; }
+        body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: white; margin: 0; overflow-x: hidden; }
+        .perspective-container { perspective: 1200px; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
+        .card-inner.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; border: 1px solid rgba(255,255,255,0.1); }
+        .card-back { transform: rotateY(180deg); background: linear-gradient(145deg, #1c2a1c, #1a2332); }
+        .card-front { background: linear-gradient(145deg, #1e293b, #1a2332); }
+        .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-bounce:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="h-full">
+    <div id="app" class="min-h-screen flex flex-col">
+        <header class="px-6 py-4 flex items-center justify-between border-b border-white/10 bg-slate-900/90 sticky top-0 z-50">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center">
+                    <i data-lucide="languages" class="text-slate-900 w-5 h-5"></i>
+                </div>
+                <h1 class="text-lg font-bold font-serif">Language Lab</h1>
+            </div>
+            <button id="backBtn" onclick="showCategories()" class="hidden text-slate-400 hover:text-white transition">
+                <i data-lucide="layout-grid"></i>
+            </button>
+        </header>
 
+        <main class="flex-1 p-4 max-w-md mx-auto w-full flex flex-col gap-6">
+            <div id="category-screen" class="grid grid-cols-1 gap-4 py-6">
+                <h2 class="text-2xl font-serif mb-2">Escolha um Deck</h2>
+                <div id="categoryGrid" class="space-y-4"></div>
+            </div>
+
+            <div id="study-screen" class="hidden animate-slide-up space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 id="deckTitle" class="text-xl font-bold font-serif">Saudações</h2>
+                    <span id="counter" class="text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full text-sm">1 / 5</span>
+                </div>
+
+                <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-amber-500 transition-all duration-500" style="width: 20%"></div>
+                </div>
+
+                <div class="perspective-container h-80">
+                    <div id="cardInner" class="card-inner" onclick="this.classList.toggle('flipped')">
+                        <div class="card-face card-front">
+                            <span class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-4">Espanhol</span>
+                            <p id="frontText" class="text-3xl font-bold text-center font-serif">¡Hola!</p>
+                            <p id="phonetic" class="text-slate-500 mt-2">/ˈo.la/</p>
+                        </div>
+                        <div class="card-face card-back">
+                            <span class="text-xs font-bold text-green-500 uppercase tracking-widest mb-4">Português</span>
+                            <p id="backText" class="text-3xl font-bold text-center font-serif">Olá!</p>
+                            <p id="example" class="text-slate-400 text-sm italic mt-4 px-4 text-center"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="nextCard('hard')" class="btn-bounce bg-red-500/10 border border-red-500/20 p-4 rounded-2xl text-red-400 hover:bg-red-500/20">
+                        <i data-lucide="frown" class="mx-auto mb-1"></i> Difícil
+                    </button>
+                    <button onclick="nextCard('ok')" class="btn-bounce bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl text-amber-400 hover:bg-amber-500/20">
+                        <i data-lucide="meh" class="mx-auto mb-1"></i> OK
+                    </button>
+                    <button onclick="nextCard('easy')" class="btn-bounce bg-green-500/10 border border-green-500/20 p-4 rounded-2xl text-green-400 hover:bg-green-500/20">
+                        <i data-lucide="smile" class="mx-auto mb-1"></i> Fácil
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const categories = {
+            greetings: {
+                name: "Saudações", icon: "handshake", color: "#f59e0b",
+                cards: [
+                    { front: "¡Hola!", back: "Olá!", phonetic: "/ˈo.la/", example: "¡Hola! ¿Cómo estás?" },
+                    { front: "¡Buenos días!", back: "Bom dia!", phonetic: "/ˈbwe.nos ˈdi.as/", example: "¡Buenos días, profesor!" },
+                    { front: "¡Gracias!", back: "Obrigado!", phonetic: "/ˈɡɾasjas/", example: "¡Muchas gracias por tudo!" }
+                ]
+            },
+            emotions: {
+                name: "Emoções", icon: "heart", color: "#ef4444",
+                cards: [
+                    { front: "Estoy feliz", back: "Estou feliz", phonetic: "/es'toy fe'lis/", example: "Hoy estoy muy feliz." },
+                    { front: "Tengo miedo", back: "Tenho medo", phonetic: "/ten'go mi'edo/", example: "Tengo miedo a la oscuridad." }
+                ]
+            }
+        };
+
+        let currentDeck = [];
+        let currentIndex = 0;
+
+        function showCategories() {
+            document.getElementById('category-screen').classList.remove('hidden');
+            document.getElementById('study-screen').classList.add('hidden');
+            document.getElementById('backBtn').classList.add('hidden');
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = '';
+            
+            Object.keys(categories).forEach(key => {
+                const cat = categories[key];
+                grid.innerHTML += `
+                    <div onclick="startDeck('${key}')" class="bg-slate-800/50 border border-white/5 p-6 rounded-2xl flex items-center gap-4 cursor-pointer hover:border-amber-500/50 transition">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: ${cat.color}20">
+                            <i data-lucide="${cat.icon}" style="color: ${cat.color}"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">${cat.name}</h3>
+                            <p class="text-slate-500 text-sm">${cat.cards.length} cartas</p>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function startDeck(key) {
+            currentDeck = categories[key].cards;
+            currentIndex = 0;
+            document.getElementById('deckTitle').innerText = categories[key].name;
+            document.getElementById('category-screen').classList.add('hidden');
+            document.getElementById('study-screen').classList.remove('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+            updateCard();
+        }
+
+        function updateCard() {
+            const card = currentDeck[currentIndex];
+            document.getElementById('cardInner').classList.remove('flipped');
+            document.getElementById('frontText').innerText = card.front;
+            document.getElementById('backText').innerText = card.back;
+            document.getElementById('phonetic').innerText = card.phonetic;
+            document.getElementById('example').innerText = card.example;
+            document.getElementById('counter').innerText = `${currentIndex + 1} / ${currentDeck.length}`;
+            document.getElementById('progressBar').style.width = `${((currentIndex + 1) / currentDeck.length) * 100}%`;
+        }
+
+        function nextCard(difficulty) {
+            if (currentIndex < currentDeck.length - 1) {
+                currentIndex++;
+                updateCard();
+            } else {
+                alert("🎉 Parabéns! Você completou este deck.");
+                showCategories();
+            }
+        }
+
+        showCategories();
+    </script>
+</body>
+</html>

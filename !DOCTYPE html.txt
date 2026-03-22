@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graffiti Canvas | Visual Studio Games</title>
+    <style>
+        :root { --neon-blue: #00f3ff; --cyber-black: #050505; }
+        body {
+            margin: 0; background: var(--cyber-black); color: white;
+            font-family: 'Segoe UI', sans-serif; display: flex;
+            flex-direction: column; align-items: center; overflow: hidden;
+            user-select: none; /* Impede selecionar textos */
+        }
+        .controls {
+            padding: 15px; background: #111; width: 100%; display: flex;
+            gap: 20px; justify-content: center; border-bottom: 2px solid var(--neon-blue);
+            z-index: 10;
+        }
+        canvas { cursor: crosshair; touch-action: none; }
+        input[type="color"] { border: none; width: 40px; height: 40px; cursor: pointer; background: none; }
+        .btn-clear { background: #ff0055; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .status { position: absolute; bottom: 10px; left: 10px; font-size: 12px; color: var(--neon-blue); opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <label>Cor: <input type="color" id="colorPicker" value="#00f3ff"></label>
+        <label>Tamanho: <input type="range" id="sizePicker" min="5" max="50" value="15"></label>
+        <button class="btn-clear" id="clearBtn">Limpar Mural</button>
+    </div>
+
+    <canvas id="paintCanvas"></canvas>
+    <div class="status">Proteção Ativa: Visual Studio & Security</div>
+
+    <script>
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const sizePicker = document.getElementById('sizePicker');
+        const clearBtn = document.getElementById('clearBtn');
+
+        let painting = false;
+
+        // --- CAMADA DE PROTEÇÃO TÉCNICA ---
+        // Bloquear botão direito
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Bloquear F12 e atalhos de inspeção
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0))) {
+                return false;
+            }
+        }
+
+        function drawWatermark() {
+            ctx.save();
+            ctx.font = "14px monospace";
+            ctx.fillStyle = "rgba(0, 243, 255, 0.2)";
+            ctx.fillText("© 2026 Visual Studio Games - Kovaliosky DeV", canvas.width - 350, canvas.height - 20);
+            ctx.restore();
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - 70;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            drawWatermark();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function startPosition(e) {
+            painting = true;
+            draw(e);
+        }
+
+        function finishedPosition() {
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+
+            ctx.lineWidth = sizePicker.value;
+            ctx.strokeStyle = colorPicker.value;
+
+            const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - 70;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            
+            // Garante que a marca d'água fique sempre visível
+            drawWatermark();
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', finishedPosition);
+        canvas.addEventListener('mousemove', draw);
+
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPosition(e); });
+        canvas.addEventListener('touchend', finishedPosition);
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawWatermark();
+        });
+    </script>
+</body>
+</html>

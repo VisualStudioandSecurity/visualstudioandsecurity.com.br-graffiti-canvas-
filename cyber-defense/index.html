@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cyber Defense | Visual Studio Games</title>
+    <style>
+        body { background: #0d1117; color: #58a6ff; font-family: 'Segoe UI', sans-serif; text-align: center; overflow: hidden; }
+        #game-container { position: relative; width: 100vw; height: 80vh; background: #000; cursor: crosshair; border-bottom: 2px solid #58a6ff; }
+        .threat { position: absolute; width: 40px; height: 40px; background: #ff0055; border-radius: 50%; box-shadow: 0 0 15px #ff0055; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>DEFESA DE SISTEMA: ELIMINE AS AMEAÇAS</h2>
+    <div id="game-container"></div>
+    <p>Ameaças neutralizadas: <span id="count">0</span></p>
+    <a href="../" style="color: #8b949e;">[ SAIR DO MODO DE DEFESA ]</a>
+
+    <script>
+        let count = 0;
+        const container = document.getElementById('game-container');
+        const countDisplay = document.getElementById('count');
+
+        function createThreat() {
+            const threat = document.createElement('div');
+            threat.className = 'threat';
+            threat.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+            threat.style.top = Math.random() * (window.innerHeight * 0.7) + 'px';
+            
+            threat.onclick = function() {
+                count++;
+                countDisplay.innerText = count;
+                this.remove();
+            };
+
+            container.appendChild(threat);
+            setTimeout(() => { if(threat) threat.remove(); }, 2000);
+        }
+        setInterval(createThreat, 800);
+    </script>
+</body>
+</html>

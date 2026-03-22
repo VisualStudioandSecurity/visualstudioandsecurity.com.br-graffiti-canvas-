@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graffiti Canvas | Visual Studio Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background: #09090b; font-family: sans-serif; }
+        canvas { display: block; cursor: crosshair; touch-action: none; }
+        .hud-gradient { background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
+    </style>
+</head>
+<body>
+    <div class="absolute top-0 left-0 w-full p-4 hud-gradient z-50 flex justify-between items-center">
+        <div class="flex gap-4 items-center">
+            <input type="color" id="colorPicker" value="#ef4444" class="w-10 h-10 border-2 border-white rounded-full cursor-pointer">
+            <input type="range" id="brushSize" min="5" max="50" value="15" class="accent-red-500">
+        </div>
+        <div class="flex gap-2">
+            <button onclick="clearCanvas()" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-700 transition">LIMPAR</button>
+            <button onclick="downloadImage()" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition">SALVAR</button>
+        </div>
+    </div>
+
+    <div class="absolute bottom-8 right-8 flex flex-col items-center gap-2">
+        <div class="w-12 h-40 bg-zinc-800 border-2 border-zinc-700 rounded-xl overflow-hidden flex flex-col-reverse">
+            <div id="paintLevel" class="w-full bg-red-500 transition-all duration-200" style="height: 100%;"></div>
+        </div>
+        <button onclick="reloadPaint()" class="bg-white text-black text-xs font-bold p-2 rounded shadow-lg animate-bounce">AGITAR</button>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const paintLevelEl = document.getElementById('paintLevel');
+        let painting = false;
+        let paintAmount = 100;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        function startPosition(e) { if (paintAmount > 0) painting = true; draw(e); }
+        function finishedPosition() { painting = false; ctx.beginPath(); }
+
+        function draw(e) {
+            if (!painting || paintAmount <= 0) return;
+            
+            const x = e.clientX || e.touches[0].clientX;
+            const y = e.clientY || e.touches[0].clientY;
+
+            ctx.lineWidth = document.getElementById('brushSize').value;
+            ctx.strokeStyle = document.getElementById('colorPicker').value;
+            ctx.shadowBlur = ctx.lineWidth / 2;
+            ctx.shadowColor = ctx.strokeStyle;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+
+            paintAmount -= 0.15;
+            paintLevelEl.style.height = paintAmount + "%";
+            paintLevelEl.style.backgroundColor = ctx.strokeStyle;
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', finishedPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', finishedPosition);
+        canvas.addEventListener('touchmove', draw);
+
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+        function reloadPaint() { paintAmount = 100; paintLevelEl.style.height = "100%"; }
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'meu-grafite.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

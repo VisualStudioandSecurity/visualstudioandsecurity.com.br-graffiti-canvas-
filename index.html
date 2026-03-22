@@ -58,4 +58,55 @@
             padding: 12px 20px; border-radius: 6px; font-weight: bold;
             text-decoration: none; color: white; border: none; cursor: pointer;
         }
-        .btn-github {
+        .btn-github { background: var(--green); }
+        .btn-pix { background: #32bcad; color: #0d1117; }
+
+        footer { width: 100%; padding: 20px 0; border-top: 1px solid #30363d; background: #090c10; margin-top: auto; }
+        .apache-footer { margin-top: 20px; font-size: 14px; color: #888; }
+        .apache-footer a { color: var(--neon); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Visual Studio Games</h1>
+        <p style="color: var(--gray); font-weight: bold;">Senior Developer & Cyber Security</p>
+
+        <div class="btn-group">
+            <a href="https://github.com/VisualStudioAndSecurity" class="btn btn-github" target="_blank">GitHub</a>
+            <button onclick="copyPix()" class="btn btn-pix">Apoiar PIX</button>
+        </div>
+
+        <div class="section-title">[02] Jogos</div>
+        <div class="gallery">
+            <a href="graffiti-canvas/" class="game-link">
+                <div class="game-card">
+                    <img src="thumb_graffiti.jpg" onerror="this.src='https://via.placeholder.com/300x160/161b22/ef4444?text=Graffiti+Canvas'">
+                    <div class="card-content">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h3>Graffiti Canvas</h3>
+                            <span style="background: #ef4444; padding: 2px 6px; border-radius: 4px; font-size: 10px;">NEW</span>
+                        </div>
+                        <p>Pixe o mural, gerencie sua tinta e salve sua arte.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <div style="color: var(--neon); font-family: monospace; margin-bottom: 10px;">[SYSTEM_LOG]: ONLINE</div>
+        
+        <div class="apache-footer">
+            <p>&copy; 2026 <strong>Visual Studio Games</strong>. Todos os direitos reservados.</p>
+            <p>Distribuído sob a <a href="LICENSE">Apache License 2.0</a>.</p>
+            <p style="font-size: 10px; opacity: 0.5;">Desenvolvido por Kovaliosky DeV</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyPix() {
+            navigator.clipboard.writeText("10267545266").then(() => alert("PIX Copiado!"));
+        }
+    </script>
+</body>
+</html>

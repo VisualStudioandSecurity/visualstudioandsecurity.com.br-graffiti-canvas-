@@ -1,127 +1,969 @@
 <!doctype html>
 <html lang="pt-br" class="h-full">
-<head>
+ <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visual Graffiti | Simulador</title>
-  
+  <title>Visual Graffiti | By Visual Studio Games</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&amp;family=Outfit:wght@300;400;600;700&amp;display=swap" rel="stylesheet">
   <style>
-    html, body { height: 100%; margin: 0; overflow: hidden; background-color: #050505; font-family: 'Outfit', sans-serif; }
-    canvas { touch-action: none; cursor: crosshair; background: #0a0a0a; }
-    .ui-panel { pointer-events: none; }
-    .ui-panel > * { pointer-events: auto; }
-    
-    /* Efeito de brilho no cursor customizado */
-    #spray-cursor {
-        position: fixed;
-        pointer-events: none;
-        z-index: 9999;
-        width: 40px;
-        height: 40px;
-        margin-left: -20px;
-        margin-top: -20px;
-        border: 2px solid #00f3ff;
-        border-radius: 50%;
-        box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+    html, body { 
+      height: 100%; 
+      margin: 0; 
+      overflow: hidden; 
+    }
+
+    :root {
+      --bg-color: #050505;
+      --surface-color: #111111;
+      --text-color: #f0f0f0;
+      --primary-action: #00f3ff;
+      --secondary-action: #ff0055;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes neonRGB {
+      0% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0088, 0 0 50px #ff0088; }
+      33% { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff88, 0 0 50px #00ff88; }
+      66% { text-shadow: 0 0 10px #0088ff, 0 0 20px #0088ff, 0 0 30px #0088ff, 0 0 40px #0088ff, 0 0 50px #ff00ff; }
+      100% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0088, 0 0 50px #ff0088; }
+    }
+
+    @keyframes menuSlide {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes canFloat {
+      0%, 100% { transform: translateY(0) rotate(-12deg); }
+      50% { transform: translateY(-10px) rotate(-8deg); }
+    }
+
+    @keyframes handGesture {
+      0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+      25% { transform: translateX(8px) translateY(-5px) rotate(5deg); }
+      50% { transform: translateX(-5px) translateY(8px) rotate(-3deg); }
+      75% { transform: translateX(6px) translateY(-3px) rotate(2deg); }
+    }
+
+    @keyframes armRotate {
+      0%, 100% { transform: rotateZ(-15deg); }
+      50% { transform: rotateZ(-25deg); }
+    }
+
+    @keyframes drip {
+      0% { height: 0; opacity: 0.8; }
+      80% { height: var(--drip-h); opacity: 0.6; }
+      100% { height: var(--drip-h); opacity: 0.3; }
+    }
+
+    @keyframes paintDrip {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(var(--drip-distance)); opacity: 0; }
+    }
+
+    @keyframes sprayParticles {
+      0% { opacity: 1; transform: scale(0.3) translate(0, 0); }
+      100% { opacity: 0; transform: scale(1.2) translate(var(--tx), var(--ty)); }
+    }
+
+    .spray-can-float { animation: canFloat 3s ease-in-out infinite; }
+    .hand-gesture { animation: handGesture 0.6s ease-in-out infinite; }
+    .arm-rotate { animation: armRotate 1.2s ease-in-out infinite; }
+
+    .menu-btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .menu-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .menu-btn:hover::before { left: 100%; }
+    .menu-btn:hover { transform: scale(1.05); }
+    .menu-btn:active { transform: scale(0.97); }
+
+    .spray-particle {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      animation: sprayParticles 1.5s ease-out infinite;
+    }
+
+    .tutorial-overlay {
+      backdrop-filter: blur(10px);
+      background: rgba(5, 5, 5, 0.9);
+    }
+
+    .game-canvas-el { 
+      cursor: crosshair; 
+      touch-action: none; 
+      background: #000; 
+      display: block;
+    }
+
+    .controls-bar {
+      background: var(--surface-color);
+      border-bottom: 2px solid var(--primary-action);
+    }
+
+    input[type="color"] {
+      border: none; 
+      width: 40px; 
+      height: 40px;
+      cursor: pointer; 
+      background: none; 
+      border-radius: 4px;
+    }
+
+    input[type="range"] {
+      accent-color: var(--primary-action);
+      width: 120px;
+    }
+
+    .drip {
+      position: absolute;
+      width: 4px;
+      border-radius: 0 0 4px 4px;
+      animation: drip 4s ease-in forwards;
+    }
+
+    .design-card {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid var(--surface-color);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--surface-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+      position: relative;
+    }
+
+    .design-card:hover {
+      border-color: var(--primary-action);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .design-card svg {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 3px var(--primary-action));
+    }
+
+    .design-card-name {
+      font-size: 12px;
+      text-align: center;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 3rem !important; }
+      #titleEl { font-size: 2.5rem !important; }
+      .menu-btn { font-size: 0.95rem !important; }
+      .flex-col.gap-4 { gap: 0.75rem !important; }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 2rem !important; }
+      #titleEl { font-size: 1.75rem !important; }
+      .menu-btn { font-size: 0.85rem !important; padding: 0.6rem 0.8rem !important; }
+      .flex-col.gap-4 { gap: 0.5rem !important; }
+      input[type="range"] { width: 80px !important; }
+      .controls-bar { flex-direction: column; gap: 0.5rem !important; }
     }
   </style>
-</head>
-<body class="text-white h-full">
-
-  <div id="spray-cursor"></div>
-
-  <div class="fixed top-6 left-6 z-50 flex items-center gap-4 ui-panel bg-black/90 p-4 rounded-2xl border border-white/10 backdrop-blur-lg shadow-2xl">
-    <div class="flex flex-col">
-        <span class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mb-2">Cor do Spray</span>
-        <input type="color" id="color-picker" value="#00f3ff" class="w-12 h-12 rounded-lg border-none bg-transparent cursor-pointer hover:scale-110 transition-transform">
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body style="background: var(--bg-color); color: var(--text-color); font-family: 'Outfit', sans-serif;">
+  <!-- MENU PAGE -->
+  <div id="menuPage" class="h-full w-full flex flex-col items-center justify-center relative overflow-hidden">
+   <audio id="bgAudio" loop style="display: none;">
+    <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+   </audio>
+   <div id="bgParticles" class="absolute inset-0 pointer-events-none"></div>
+   <div class="absolute top-0 left-0 w-full h-2 pointer-events-none" id="dripContainer"></div>
+   <div class="arm-rotate mb-8 relative" style="animation-delay: 0.1s; transform-origin: 150px 20px;">
+    <svg width="280" height="200" viewbox="0 0 280 200" fill="none" style="filter: drop-shadow(0 0 20px rgba(0,243,255,0.2)); max-width: 100%;">
+     <rect x="10" y="20" width="60" height="90" rx="8" fill="#FF6B35" opacity="0.9" /> <rect x="15" y="25" width="50" height="35" fill="#FF8C42" opacity="0.7" /> <path d="M 70 30 L 140 50 L 135 95 L 65 80 Z" fill="#D4845C" /> <ellipse cx="145" cy="72" rx="12" ry="18" fill="#C67C4E" /> <path d="M 155 55 Q 180 45 200 50 Q 210 55 205 75 Q 200 85 175 90 L 165 70 Z" fill="#D4A574" /> <path d="M 165 70 Q 160 75 165 85 Q 170 80 170 70 Z" fill="#C89968" /> <path d="M 175 55 L 210 50 L 215 65 L 185 72 Z" fill="#D4A574" /> <path d="M 185 50 L 215 48 L 218 60 L 190 65 Z" fill="#E0B79F" /> <path d="M 195 50 L 220 50 L 220 58 L 200 62 Z" fill="#D4A574" />
+    </svg>
+    <div class="hand-gesture" style="position: absolute; top: 35px; left: 180px; transform-origin: 20px 40px;">
+     <svg width="90" height="150" viewbox="0 0 90 150" fill="none">
+      <rect x="39" y="5" width="12" height="10" rx="2" fill="#888" /> <rect x="42" y="0" width="6" height="6" rx="1" fill="#aaa" /> <rect x="23" y="15" width="44" height="20" rx="5" fill="var(--primary-action)" class="can-cap" /> <rect x="19" y="35" width="52" height="100" rx="6" fill="#222" /> <rect x="23" y="40" width="44" height="90" rx="4" fill="linear-gradient(135deg, #333, #111)" /> <rect x="26" y="45" width="40" height="45" rx="3" fill="var(--primary-action)" opacity="0.2" class="can-label" /> <text x="46" y="65" text-anchor="middle" fill="var(--primary-action)" font-size="9" font-family="'Permanent Marker', cursive" class="can-text">
+       GRAFFITI
+      </text> <rect x="21" y="130" width="48" height="6" rx="3" fill="#1a1a1a" /> <rect x="29" y="42" width="3" height="80" rx="1" fill="white" opacity="0.06" />
+     </svg>
+     <div id="heldSprayMist" class="absolute" style="top: -25px; left: 28px;">
+      <div class="spray-particle" style="background: var(--primary-action); opacity: 0.4; --tx: -12px; --ty: -20px; animation-delay: 0s;"></div>
+      <div class="spray-particle" style="background: var(--primary-action); opacity: 0.3; --tx: 4px; --ty: -25px; animation-delay: 0.2s;"></div>
+      <div class="spray-particle" style="background: var(--primary-action); opacity: 0.35; --tx: -6px; --ty: -28px; animation-delay: 0.4s;"></div>
+      <div class="spray-particle" style="background: var(--primary-action); opacity: 0.25; --tx: 10px; --ty: -18px; animation-delay: 0.6s;"></div>
+      <div class="spray-particle" style="background: var(--primary-action); opacity: 0.3; --tx: -15px; --ty: -22px; animation-delay: 0.8s;"></div>
+     </div>
     </div>
-    
-    <div class="h-12 w-[1px] bg-white/10"></div>
-    
-    <button onclick="resetCanvas()" class="flex flex-col items-center gap-1 px-3 py-2 hover:bg-red-500/10 rounded-xl transition-all text-red-500">
-        <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold uppercase">Limpar</span>
-    </button>
+   </div>
+   <h1 id="titleEl" class="text-5xl md:text-7xl font-bold mb-2 text-center" style="font-family: 'Permanent Marker', cursive; animation: fadeInUp 0.8s ease;">Visual <span style="animation: neonRGB 3s ease-in-out infinite; font-weight: bold;">Graffiti Studio Games</span></h1>
+   <p id="subtitleEl" class="text-sm md:text-base mb-12 tracking-widest uppercase opacity-60" style="animation: fadeInUp 1s ease; animation-fill-mode: backwards; animation-delay: 0.3s;">By Visual Studio Games</p>
+   <div class="flex flex-col gap-4 w-72 md:w-80">
+    <button id="playBtn" class="menu-btn flex items-center justify-center gap-4 px-6 py-4 rounded-lg text-lg font-semibold transition-all" style="background: var(--primary-action); color: var(--bg-color); animation: menuSlide 0.6s ease backwards; animation-delay: 0.5s;" onclick="playGame()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon>
+     </svg><span>Jogar</span> </button> <button id="restartBtn" class="menu-btn flex items-center justify-center gap-4 px-6 py-4 rounded-lg text-lg font-semibold border-2 transition-all" style="border-color: var(--primary-action); color: var(--primary-action); background: transparent; animation: menuSlide 0.6s ease backwards; animation-delay: 0.7s;" onclick="restartGame()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2-8.83" />
+     </svg><span>Reiniciar</span> </button> <button id="howToBtn" class="menu-btn flex items-center justify-center gap-4 px-6 py-4 rounded-lg text-lg font-semibold border-2 transition-all" style="border-color: var(--secondary-action); color: var(--secondary-action); background: transparent; animation: menuSlide 0.6s ease backwards; animation-delay: 0.9s;" onclick="showTutorial()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" />
+     </svg><span>Como Jogar</span> </button>
+   </div>
+   <p class="absolute bottom-4 left-3 text-xs opacity-30">© 2026 <span style="animation: neonRGB 3s ease-in-out infinite; font-weight: bold;">Visual Studio Games</span> - Kovaliosky DeV</p>
+  </div><!-- DESIGN SELECTION PAGE -->
+  <div id="designPage" class="h-full w-full flex flex-col hidden">
+   <div class="px-4 py-6 text-center border-b-2" style="border-color: var(--primary-action);">
+    <h2 class="text-3xl font-bold mb-2" style="font-family: 'Permanent Marker', cursive; color: var(--primary-action);">🎨 Escolha seu Stencil</h2>
+    <p class="text-sm opacity-70">Selecione um desenho para pintar</p>
+   </div>
+   <div id="designGrid" class="flex-1 overflow-auto p-4 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div><button onclick="backToMenu()" class="px-4 py-3 m-4 rounded font-bold border transition-all hover:opacity-80 flex items-center justify-center gap-2" style="border-color: var(--primary-action); color: var(--primary-action); background: var(--surface-color);">
+    <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
+    </svg> Voltar ao Menu </button>
+  </div><!-- TUTORIAL OVERLAY -->
+  <div id="tutorialOverlay" class="fixed inset-0 tutorial-overlay z-50 flex items-center justify-center hidden">
+   <div class="relative max-w-md w-full mx-4 p-8 rounded-2xl" style="background: var(--surface-color); border: 1px solid var(--primary-action);">
+    <button onclick="closeTutorial()" class="absolute top-3 right-3 p-1 rounded-full hover:opacity-70 transition-opacity" style="color: var(--text-color);">
+     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+     </svg></button>
+    <h2 class="text-2xl font-bold mb-6" style="font-family: 'Permanent Marker', cursive; color: var(--primary-action);">🎨 Como Jogar</h2>
+    <div class="flex flex-col gap-4 text-sm" style="color: var(--text-color); opacity: 0.85;">
+     <div class="flex items-start gap-3">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background: var(--primary-action); color: var(--bg-color);">
+       1
+      </div>
+      <p>Clique em <strong>"Jogar"</strong> para selecionar um stencil.</p>
+     </div>
+     <div class="flex items-start gap-3">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background: var(--primary-action); color: var(--bg-color);">
+       2
+      </div>
+      <p>Escolha o desenho que deseja pintar na galeria de stencils.</p>
+     </div>
+     <div class="flex items-start gap-3">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background: var(--primary-action); color: var(--bg-color);">
+       3
+      </div>
+      <p>Use o <strong>seletor de cor</strong> para escolher sua tinta.</p>
+     </div>
+     <div class="flex items-start gap-3">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background: var(--primary-action); color: var(--bg-color);">
+       4
+      </div>
+      <p>Ajuste o <strong>tamanho do pincel</strong> para pintar os detalhes.</p>
+     </div>
+     <div class="flex items-start gap-3">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background: var(--secondary-action); color: white;">
+       5
+      </div>
+      <p><strong>Clique e arraste</strong> dentro do desenho para pintar!</p>
+     </div>
+    </div><button onclick="closeTutorial()" class="mt-6 w-full py-3 rounded-lg font-semibold text-base transition-all hover:opacity-90" style="background: var(--primary-action); color: var(--bg-color);">Entendi!</button>
+   </div>
+  </div><!-- GAME PAGE -->
+  <div id="gamePage" class="h-full w-full flex flex-col hidden">
+   <div class="controls-bar px-4 py-3 flex flex-wrap gap-4 items-center justify-center z-10">
+    <div class="flex gap-2 items-center"><label class="flex items-center gap-2 text-sm"> <span>📏 Pincel:</span> <input type="range" id="sizePicker" min="3" max="25" value="8"> </label>
+    </div>
+    <div id="colorPalette" class="flex gap-3 items-center justify-center flex-wrap">
+     <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#00f3ff" title="Ciano">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#00f3ff" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#00f3ff" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#ff0055" title="Rosa">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#ff0055" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#ff0055" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#00ff88" title="Verde">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#00ff88" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#00ff88" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#ffff00" title="Amarelo">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#ffff00" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#ffff00" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#ff6600" title="Laranja">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#ff6600" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#ff6600" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#ff00ff" title="Magenta">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#ff00ff" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#ff00ff" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#00ccff" title="Azul">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#00ccff" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#00ccff" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#ffffff" title="Branco">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#ffffff" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#ffffff" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#000000" title="Preto">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#000000" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#000000" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button> <button class="color-btn spray-can-icon transition-all hover:scale-110" data-color="#ff3333" title="Vermelho">
+      <svg width="28" height="40" viewbox="0 0 28 40" fill="none">
+       <rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#ff3333" class="can-top" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#ff3333" opacity="0.3" class="can-label" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+      </svg></button>
+    </div>
+    <div class="flex gap-2"><button id="clearBtn" class="px-4 py-2 rounded font-bold text-sm transition-all hover:opacity-80 flex items-center gap-2" style="background: var(--secondary-action); color: white;">
+      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+      </svg> Limpar </button> <button onclick="changeDesign()" class="px-4 py-2 rounded font-bold text-sm border transition-all hover:opacity-80 flex items-center gap-2" style="border-color: var(--primary-action); color: var(--primary-action); background: var(--surface-color);">
+      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2-8.83" />
+      </svg> Outro Desenho </button> <button onclick="backToMenu()" class="px-4 py-2 rounded font-bold text-sm border transition-all hover:opacity-80 flex items-center gap-2" style="border-color: var(--primary-action); color: var(--primary-action); background: var(--surface-color);">
+      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
+      </svg> Menu </button>
+    </div>
+   </div><input type="color" id="colorPicker" value="#00f3ff" style="display: none;">
+   <div class="flex-1 flex items-center justify-center relative overflow-hidden" style="background: #000;">
+    <canvas id="paintCanvas" class="game-canvas-el" style="position: absolute; top: 0; left: 0;"></canvas>
+    <div id="sprayCanFollower" style="position: absolute; pointer-events: none; opacity: 0; z-index: 100; transform: translate(-50%, -50%); transition: opacity 0.2s ease;">
+     <svg width="32" height="48" viewbox="0 0 28 40" fill="none"><rect x="11" y="2" width="6" height="3" rx="1" fill="#666" /> <rect x="10" y="5" width="8" height="4" rx="1" fill="#00f3ff" class="can-top-follower" /> <rect x="8" y="9" width="12" height="20" rx="2" fill="#222" /> <rect x="9" y="10" width="10" height="18" rx="1.5" fill="#111" /> <rect x="10" y="12" width="8" height="10" rx="1" fill="#00f3ff" opacity="0.3" class="can-label-follower" /> <rect x="8" y="29" width="12" height="4" rx="1.5" fill="#1a1a1a" /> <circle cx="12" cy="14" r="1.5" fill="white" opacity="0.1" />
+     </svg>
+     <div id="dripEffectFollower" style="position: absolute; top: 40px; left: 50%; transform: translateX(-50%);"></div>
+    </div><!-- INK LEVEL BAR -->
+    <div id="inkLevelContainer" style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 50;">
+     <div style="font-size: 12px; color: var(--primary-action); font-weight: bold;">
+      Tinta: <span id="inkPercentage">100</span>%
+     </div>
+     <div style="width: 150px; height: 20px; border: 2px solid var(--primary-action); border-radius: 10px; background: rgba(0,243,255,0.1); overflow: hidden;">
+      <div id="inkBar" style="height: 100%; background: linear-gradient(90deg, #00f3ff, #00ccff); width: 100%; border-radius: 8px; transition: width 0.1s ease;"></div>
+     </div>
+    </div>
+   </div>
+   <div class="absolute bottom-2 left-3 text-xs" style="color: var(--primary-action); opacity: 0.5;">
+    Proteção Ativa: Visual Studio &amp; Security
+   </div>
   </div>
-
-  <canvas id="graffiti-canvas"></canvas>
-
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Inicializar Ícones
-      lucide.createIcons();
+    // CONFIG & SDK
+    const defaultConfig = {
+      game_title: 'Visual Graffiti',
+      subtitle_text: 'By Visual Studio Games',
+      background_color: '#050505',
+      surface_color: '#111111',
+      text_color: '#f0f0f0',
+      primary_action: '#00f3ff',
+      secondary_action: '#ff0055',
+      font_family: 'Permanent Marker',
+      font_size: 16
+    };
 
-      const canvas = document.getElementById('graffiti-canvas');
-      const ctx = canvas.getContext('2d');
-      const colorPicker = document.getElementById('color-picker');
-      const cursor = document.getElementById('spray-cursor');
+    let currentConfig = { ...defaultConfig };
+    let currentDesign = null;
+    let audioSource = null;
 
-      // Ajustar o tamanho do Canvas
-      function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        ctx.fillStyle = '#0a0a0a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      let painting = false;
-
-      // Movimentação
-      const move = (e) => {
-        const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-        const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-        
-        cursor.style.left = x + 'px';
-        cursor.style.top = y + 'px';
-
-        if (painting) {
-          drawSpray(x, y);
+    // DESIGN LIBRARY
+    const designLibrary = [
+      {
+        id: 'dragon',
+        name: '🐉 Dragão',
+        drawFn: (ctx, centerX, centerY, scale) => {
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY - 20 * scale, 15 * scale, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(centerX + 10 * scale, centerY - 25 * scale);
+          ctx.lineTo(centerX + 20 * scale, centerY - 35 * scale);
+          ctx.lineTo(centerX + 15 * scale, centerY - 20 * scale);
+          ctx.closePath();
+          ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(centerX, centerY + 10 * scale, 25 * scale, 20 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
         }
-      };
-
-      // Lógica de Pintura (Efeito de Spray)
-      function drawSpray(x, y) {
-        const radius = 20;
-        const density = 40;
-        ctx.fillStyle = colorPicker.value;
-        
-        for (let i = 0; i < density; i++) {
-          const offsetX = (Math.random() - 0.5) * 2 * radius;
-          const offsetY = (Math.random() - 0.5) * 2 * radius;
-          
-          if (Math.sqrt(offsetX*offsetX + offsetY*offsetY) < radius) {
-            ctx.globalAlpha = Math.random() * 0.5;
-            ctx.fillRect(x + offsetX, y + offsetY, 2, 2);
+      },
+      {
+        id: 'flower',
+        name: '🌸 Flor',
+        drawFn: (ctx, centerX, centerY, scale) => {
+          ctx.fillStyle = '#333';
+          for (let i = 0; i < 5; i++) {
+            const angle = (i * Math.PI * 2) / 5;
+            const x = centerX + Math.cos(angle) * 20 * scale;
+            const y = centerY + Math.sin(angle) * 20 * scale;
+            ctx.beginPath();
+            ctx.ellipse(x, y, 10 * scale, 15 * scale, angle, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, 8 * scale, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      },
+      {
+        id: 'star',
+        name: '⭐ Estrela',
+        drawFn: (ctx, centerX, centerY, scale) => {
+          ctx.fillStyle = '#333';
+          const spikes = 5;
+          const outerRadius = 25 * scale;
+          const innerRadius = 10 * scale;
+          let rot = Math.PI / 2 * 3;
+          const step = Math.PI / spikes;
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY - outerRadius);
+          for (let i = 0; i < spikes; i++) {
+            ctx.lineTo(centerX + Math.cos(rot) * outerRadius, centerY + Math.sin(rot) * outerRadius);
+            rot += step;
+            ctx.lineTo(centerX + Math.cos(rot) * innerRadius, centerY + Math.sin(rot) * innerRadius);
+            rot += step;
+          }
+          ctx.lineTo(centerX, centerY - outerRadius);
+          ctx.closePath();
+          ctx.fill();
+        }
+      },
+      {
+        id: 'heart',
+        name: '💖 Coração',
+        drawFn: (ctx, centerX, centerY, scale) => {
+          ctx.fillStyle = '#333';
+          const size = 20 * scale;
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY + size / 4);
+          ctx.quadraticCurveTo(centerX - size / 2, centerY - size / 4, centerX - size / 2, centerY - size / 3);
+          ctx.quadraticCurveTo(centerX - size / 2, centerY - size / 1.5, centerX, centerY - size / 2);
+          ctx.quadraticCurveTo(centerX + size / 2, centerY - size / 1.5, centerX + size / 2, centerY - size / 3);
+          ctx.quadraticCurveTo(centerX + size / 2, centerY - size / 4, centerX, centerY + size / 4);
+          ctx.closePath();
+          ctx.fill();
+        }
+      },
+      {
+        id: 'skull',
+        name: '💀 Caveira',
+        drawFn: (ctx, centerX, centerY, scale) => {
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY - 10 * scale, 18 * scale, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(centerX - 12 * scale, centerY - 15 * scale, 5 * scale, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(centerX + 12 * scale, centerY - 15 * scale, 5 * scale, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#050505';
+          ctx.beginPath();
+          ctx.arc(centerX - 12 * scale, centerY - 15 * scale, 2 * scale, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(centerX + 12 * scale, centerY - 15 * scale, 2 * scale, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY + 10 * scale, 15 * scale, 0, Math.PI, false);
+          ctx.fill();
+        }
+      },
+      {
+        id: 'bird',
+        name: '🦅 Pássaro',
+        drawFn: (ctx, centerX, centerY, scale) => {
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.ellipse(centerX, centerY, 15 * scale, 10 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(centerX + 12 * scale, centerY - 5 * scale, 6 * scale, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(centerX + 12 * scale, centerY - 5 * scale);
+          ctx.lineTo(centerX + 18 * scale, centerY - 8 * scale);
+          ctx.lineTo(centerX + 20 * scale, centerY - 3 * scale);
+          ctx.closePath();
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(centerX - 10 * scale, centerY - 5 * scale);
+          ctx.lineTo(centerX - 20 * scale, centerY - 15 * scale);
+          ctx.lineTo(centerX - 15 * scale, centerY - 5 * scale);
+          ctx.closePath();
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(centerX - 10 * scale, centerY + 5 * scale);
+          ctx.lineTo(centerX - 20 * scale, centerY + 15 * scale);
+          ctx.lineTo(centerX - 15 * scale, centerY + 5 * scale);
+          ctx.closePath();
+          ctx.fill();
+        }
+      },
+      {
+        id: 'crown',
+        name: '👑 Coroa',
+        drawFn: (ctx, centerX, centerY, scale) => {
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.moveTo(centerX - 25 * scale, centerY + 10 * scale);
+          ctx.lineTo(centerX - 15 * scale, centerY - 15 * scale);
+          ctx.lineTo(centerX - 5 * scale, centerY + 5 * scale);
+          ctx.lineTo(centerX + 5 * scale, centerY - 15 * scale);
+          ctx.lineTo(centerX + 15 * scale, centerY + 5 * scale);
+          ctx.lineTo(centerX + 25 * scale, centerY + 10 * scale);
+          ctx.lineTo(centerX - 25 * scale, centerY + 10 * scale);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillRect(centerX - 25 * scale, centerY + 10 * scale, 50 * scale, 8 * scale);
+        }
+      },
+      {
+        id: 'phoenix',
+        name: '🔥 Fênix',
+        drawFn: (ctx, centerX, centerY, scale) => {
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.ellipse(centerX, centerY, 12 * scale, 16 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(centerX - 8 * scale, centerY - 12 * scale, 7 * scale, 0, Math.PI * 2);
+          ctx.fill();
+          for (let i = 0; i < 4; i++) {
+            const angle = (i * Math.PI * 2) / 4 - Math.PI / 2;
+            const x = centerX + Math.cos(angle) * 18 * scale;
+            const y = centerY + Math.sin(angle) * 18 * scale;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(x, y);
+            ctx.lineTo(x + Math.cos(angle) * 5 * scale, y + Math.sin(angle) * 5 * scale);
+            ctx.closePath();
+            ctx.fill();
           }
         }
       }
+    ];
 
-      // Eventos de Mouse/Touch
-      window.addEventListener('mousedown', () => painting = true);
-      window.addEventListener('mouseup', () => painting = false);
-      window.addEventListener('mousemove', move);
+    function applyConfig(config) {
+      currentConfig = { ...config };
+      const root = document.documentElement.style;
+      root.setProperty('--bg-color', config.background_color || defaultConfig.background_color);
+      root.setProperty('--surface-color', config.surface_color || defaultConfig.surface_color);
+      root.setProperty('--text-color', config.text_color || defaultConfig.text_color);
+      root.setProperty('--primary-action', config.primary_action || defaultConfig.primary_action);
+      root.setProperty('--secondary-action', config.secondary_action || defaultConfig.secondary_action);
+
+      const titleEl = document.getElementById('titleEl');
+      const subtitleEl = document.getElementById('subtitleEl');
       
-      window.addEventListener('touchstart', (e) => { painting = true; move(e); });
-      window.addEventListener('touchend', () => painting = false);
-      window.addEventListener('touchmove', (e) => { e.preventDefault(); move(e); }, { passive: false });
+      if (titleEl) {
+        const title = config.game_title || defaultConfig.game_title;
+        titleEl.innerHTML = `<span style="animation: neonRGB 3s ease-in-out infinite; font-weight: bold;">${title.split(' ')[0] || 'Visual'}</span> <span style="animation: neonRGB 3s ease-in-out infinite; font-weight: bold;">${title.split(' ').slice(1).join(' ') || 'Graffiti'}</span>`;
+      }
+      if (subtitleEl) subtitleEl.textContent = config.subtitle_text || defaultConfig.subtitle_text;
 
-      // Atualizar cor do cursor neon
-      colorPicker.addEventListener('input', () => {
-        cursor.style.borderColor = colorPicker.value;
-        cursor.style.boxShadow = `0 0 15px ${colorPicker.value}`;
+      const customFont = config.font_family || defaultConfig.font_family;
+      if (titleEl) titleEl.style.fontFamily = `${customFont}, 'Permanent Marker', cursive`;
+
+      const baseSize = config.font_size || defaultConfig.font_size;
+      document.querySelectorAll('.menu-btn span').forEach(el => {
+        el.style.fontSize = `${baseSize * 1.1}px`;
       });
+      if (subtitleEl) subtitleEl.style.fontSize = `${baseSize * 0.85}px`;
 
-      // Função de Limpar
-      window.resetCanvas = () => {
-        if(confirm("Deseja apagar o desenho?")) resize();
-      };
+      updateSprayCanColor();
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => { applyConfig(config); },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+            { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => config.primary_action || defaultConfig.primary_action, set: (v) => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); } },
+            { get: () => config.secondary_action || defaultConfig.secondary_action, set: (v) => { config.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); } }
+          ],
+          borderables: [],
+          fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+          fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['game_title', config.game_title || defaultConfig.game_title],
+          ['subtitle_text', config.subtitle_text || defaultConfig.subtitle_text]
+        ])
+      });
+    }
+
+    applyConfig(defaultConfig);
+
+    // BACKGROUND PARTICLES
+    function createBgParticles() {
+      const container = document.getElementById('bgParticles');
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.style.cssText = `
+          position: absolute;
+          width: ${3 + Math.random() * 5}px;
+          height: ${3 + Math.random() * 5}px;
+          border-radius: 50%;
+          background: var(--primary-action);
+          opacity: ${0.05 + Math.random() * 0.1};
+          left: ${Math.random() * 100}%;
+          top: ${Math.random() * 100}%;
+          animation: sprayParticles ${4 + Math.random() * 6}s ease-out infinite;
+          --tx: ${-30 + Math.random() * 60}px;
+          --ty: ${-30 + Math.random() * 60}px;
+          animation-delay: ${Math.random() * 5}s;
+        `;
+        container.appendChild(p);
+      }
+    }
+    createBgParticles();
+
+    // DRIP EFFECTS
+    function createDrips() {
+      const container = document.getElementById('dripContainer');
+      const colors = ['var(--primary-action)', 'var(--secondary-action)', '#ff00ff', '#00ff88'];
+      for (let i = 0; i < 12; i++) {
+        const drip = document.createElement('div');
+        drip.className = 'drip';
+        drip.style.left = Math.random() * 100 + '%';
+        drip.style.background = colors[Math.floor(Math.random() * colors.length)];
+        drip.style.setProperty('--drip-h', (30 + Math.random() * 80) + 'px');
+        drip.style.animationDelay = Math.random() * 3 + 's';
+        drip.style.opacity = 0.4 + Math.random() * 0.3;
+        container.appendChild(drip);
+      }
+    }
+    createDrips();
+
+    // NAVIGATION
+    function playGame() {
+      // Seleciona um design aleatório
+      const randomDesign = designLibrary[Math.floor(Math.random() * designLibrary.length)];
+      currentDesign = randomDesign;
+      document.getElementById('menuPage').classList.add('hidden');
+      document.getElementById('gamePage').classList.remove('hidden');
+      resizeCanvas();
+    }
+
+    function startDesignSelection() {
+      document.getElementById('menuPage').classList.add('hidden');
+      document.getElementById('designPage').classList.remove('hidden');
+      generateDesignGrid();
+      ensureAudio();
+    }
+
+    function startGame(design) {
+      currentDesign = design;
+      document.getElementById('designPage').classList.add('hidden');
+      document.getElementById('gamePage').classList.remove('hidden');
+      resizeCanvas();
+    }
+
+    function restartGame() {
+      startDesignSelection();
+    }
+
+    function changeDesign() {
+      document.getElementById('gamePage').classList.add('hidden');
+      document.getElementById('designPage').classList.remove('hidden');
+    }
+
+    function backToMenu() {
+      currentDesign = null;
+      document.getElementById('menuPage').classList.remove('hidden');
+      document.getElementById('gamePage').classList.add('hidden');
+      document.getElementById('designPage').classList.add('hidden');
+    }
+
+    function showTutorial() {
+      document.getElementById('tutorialOverlay').classList.remove('hidden');
+    }
+
+    function closeTutorial() {
+      document.getElementById('tutorialOverlay').classList.add('hidden');
+    }
+
+    // DESIGN GRID
+    function generateDesignGrid() {
+      const grid = document.getElementById('designGrid');
+      grid.innerHTML = '';
+      designLibrary.forEach(design => {
+        const card = document.createElement('div');
+        card.className = 'design-card';
+        const canvas = document.createElement('canvas');
+        canvas.width = 100;
+        canvas.height = 100;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'transparent';
+        ctx.fillRect(0, 0, 100, 100);
+        design.drawFn(ctx, 50, 50, 1.5);
+        card.appendChild(canvas);
+        const name = document.createElement('div');
+        name.className = 'design-card-name';
+        name.textContent = design.name;
+        card.appendChild(name);
+        card.onclick = () => startGame(design);
+        grid.appendChild(card);
+      });
+    }
+
+    // SPRAY CAN COLOR UPDATE
+    function updateSprayCanColor() {
+      const color = document.getElementById('colorPicker')?.value || currentConfig.primary_action || '#00f3ff';
+      document.querySelectorAll('.can-cap').forEach(el => el.setAttribute('fill', color));
+      document.querySelectorAll('.can-label').forEach(el => el.setAttribute('fill', color));
+      document.querySelectorAll('.can-text').forEach(el => el.setAttribute('fill', color));
+      document.querySelectorAll('#heldSprayMist .spray-particle').forEach(p => {
+        p.style.background = color;
+      });
+    }
+
+    document.getElementById('colorPicker')?.addEventListener('change', () => {
+      updateSprayCanColor();
+      updateInkBar();
     });
+    updateSprayCanColor();
+
+    // COLOR PALETTE BUTTONS
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const color = btn.getAttribute('data-color');
+        document.getElementById('colorPicker').value = color;
+        updateSprayCanColor();
+        updateInkBar();
+        // Update active button style
+        document.querySelectorAll('.color-btn').forEach(b => {
+          b.style.filter = 'drop-shadow(0 0 0px rgba(0,0,0,0))';
+        });
+        btn.style.filter = 'drop-shadow(0 0 10px rgba(255,255,255,0.6))';
+      });
+    });
+
+    // Set first color button as active
+    document.querySelector('.color-btn').style.filter = 'drop-shadow(0 0 10px rgba(255,255,255,0.6))';
+
+    // CANVAS PAINTING
+    const canvas = document.getElementById('paintCanvas');
+    const ctx = canvas.getContext('2d');
+    const colorPicker = document.getElementById('colorPicker');
+    const sizePicker = document.getElementById('sizePicker');
+    const clearBtn = document.getElementById('clearBtn');
+    let painting = false;
+    let imageData = null;
+
+    // INK SYSTEM
+    let inkLevel = 100;
+    const maxInk = 100;
+    let continuousPaintTime = 0;
+    const dripThresholdTime = 3000; // 3 segundos para começar a vazar
+    let isDripping = false;
+
+    function updateInkBar() {
+      const inkBar = document.getElementById('inkBar');
+      const inkPercentage = document.getElementById('inkPercentage');
+      const percentage = (inkLevel / maxInk) * 100;
+      inkBar.style.width = percentage + '%';
+      inkPercentage.textContent = Math.ceil(inkLevel);
+
+      // Cor da barra segue a cor da tinta selecionada
+      const color = document.getElementById('colorPicker')?.value || currentConfig.primary_action || '#00f3ff';
+      const rgb = hexToRgb(color);
+      const darkerColor = `rgb(${Math.floor(rgb.r * 0.6)}, ${Math.floor(rgb.g * 0.6)}, ${Math.floor(rgb.b * 0.6)})`;
+      inkBar.style.background = `linear-gradient(90deg, ${color}, ${darkerColor})`;
+    }
+
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : { r: 0, g: 243, b: 255 };
+    }
+
+    function consumeInk(amount) {
+      inkLevel = Math.max(0, inkLevel - amount);
+      updateInkBar();
+    }
+
+    function createDripEffect(x, y, color) {
+      // Múltiplos gotículas para criar efeito mais realista
+      for (let i = 0; i < 3; i++) {
+        const drip = document.createElement('div');
+        drip.style.cssText = `
+          position: absolute;
+          left: ${x + (Math.random() - 0.5) * 8}px;
+          top: ${y}px;
+          width: ${2 + Math.random() * 4}px;
+          height: ${8 + Math.random() * 12}px;
+          background: ${color};
+          border-radius: 50% 50% 50% 0;
+          opacity: 0.8;
+          animation: paintDrip ${1.5 + Math.random() * 1.5}s ease-in forwards;
+          --drip-distance: ${60 + Math.random() * 80}px;
+          animation-delay: ${i * 0.1}s;
+          pointer-events: none;
+          box-shadow: 0 0 4px ${color}80;
+        `;
+        canvas.parentElement.appendChild(drip);
+        
+        setTimeout(() => drip.remove(), 4000);
+      }
+    }
+
+    function drawCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Desenha a tinta
+      if (imageData) {
+        ctx.putImageData(imageData, 0, 0);
+      }
+    }
+
+    function resizeCanvas() {
+      const controlsH = document.querySelector('.controls-bar')?.offsetHeight || 60;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight - controlsH;
+      drawCanvas();
+    }
+
+    function clearCanvas() {
+      imageData = null;
+      inkLevel = 100;
+      updateInkBar();
+      drawCanvas();
+    }
+
+    clearBtn.addEventListener('click', clearCanvas);
+
+    function startPosition(e) {
+      if (!currentDesign || inkLevel <= 0) return;
+      painting = true;
+      continuousPaintTime = 0;
+      isDripping = false;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+      const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - rect.top;
+      
+      if (!imageData) {
+        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function finishedPosition() {
+      painting = false;
+      continuousPaintTime = 0;
+      isDripping = false;
+    }
+
+    function draw(e) {
+      if (!painting || !currentDesign || inkLevel <= 0) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+      const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - rect.top;
+      const color = colorPicker.value;
+      const size = parseInt(sizePicker.value);
+
+      if (!imageData) {
+        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      }
+
+      // Incrementa tempo contínuo de pintura
+      continuousPaintTime += 16; // ~60fps
+      
+      // Verifica se atingiu o tempo de vazamento
+      if (continuousPaintTime >= dripThresholdTime && !isDripping) {
+        isDripping = true;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Spray efeito
+      for (let i = 0; i < 5; i++) {
+        const offsetX = (Math.random() - 0.5) * size * 2;
+        const offsetY = (Math.random() - 0.5) * size * 2;
+        const radius = Math.random() * 0.5;
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.4 + Math.random() * 0.4;
+        ctx.beginPath();
+        ctx.arc(x + offsetX, y + offsetY, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Consumir tinta baseado no tamanho
+      const inkUsage = (size / 25) * 0.5; // Quanto maior, mais tinta usa
+      consumeInk(inkUsage);
+
+      // Criar efeito de vazamento se em modo drip
+      if (isDripping && Math.random() < 0.3) {
+        createDripEffect(x + (Math.random() - 0.5) * 4, y + size, color);
+      }
+    }
+
+    canvas.addEventListener('mousedown', startPosition);
+    canvas.addEventListener('mouseup', finishedPosition);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseleave', finishedPosition);
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPosition(e); });
+    canvas.addEventListener('touchend', finishedPosition);
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+    window.addEventListener('resize', () => {
+      if (!document.getElementById('gamePage').classList.contains('hidden')) {
+        resizeCanvas();
+      }
+    });
+
+    // SPRAY CAN FOLLOWER
+    const sprayCanFollower = document.getElementById('sprayCanFollower');
+    const gamePageDiv = document.getElementById('gamePage');
+
+    function updateSprayCanFollower(e) {
+      if (gamePageDiv.classList.contains('hidden')) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+      const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+      
+      // Verifica se está dentro da área do canvas
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        sprayCanFollower.style.left = x + 'px';
+        sprayCanFollower.style.top = y + 'px';
+        sprayCanFollower.style.opacity = '1';
+        updateSprayCanColor2();
+      } else {
+        sprayCanFollower.style.opacity = '0';
+      }
+    }
+
+    function updateSprayCanColor2() {
+      const color = document.getElementById('colorPicker')?.value || currentConfig.primary_action || '#00f3ff';
+      document.querySelectorAll('.can-top-follower').forEach(el => el.setAttribute('fill', color));
+      document.querySelectorAll('.can-label-follower').forEach(el => el.setAttribute('fill', color));
+    }
+
+    document.addEventListener('mousemove', updateSprayCanFollower);
+    document.addEventListener('touchmove', updateSprayCanFollower);
+    colorPicker.addEventListener('change', updateSprayCanColor2);
+    updateSprayCanColor2();
+
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+
   </script>
-</body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e0af3444063d7b2',t:'MTc3NDI0Mjg0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

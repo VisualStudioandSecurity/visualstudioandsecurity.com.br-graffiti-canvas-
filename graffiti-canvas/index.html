@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visual Graffiti | Secured Portal</title>
+  <title>Visual Graffiti | Simulador Pro</title>
   
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
@@ -12,111 +12,123 @@
   <style>
     html, body { height: 100%; margin: 0; overflow: hidden; background-color: #050505; }
     :root {
-      --bg-color: #050505;
-      --surface-color: #111111;
       --neon: #00f3ff;
+      --bg: #0a0a0a;
     }
-    canvas { touch-action: none; cursor: none; background: #0a0a0a; }
+    canvas { touch-action: none; cursor: none; background: var(--bg); }
     .ui-overlay { pointer-events: none; }
     .ui-overlay > * { pointer-events: auto; }
     
-    /* Cursor de Spray Customizado */
-    #spray-follower {
+    #spray-cursor {
         position: fixed;
         pointer-events: none;
         z-index: 9999;
-        width: 60px;
-        height: 60px;
-        margin-left: -30px;
-        margin-top: -30px;
-        transition: transform 0.05s linear;
+        width: 50px;
+        height: 50px;
+        margin-left: -25px;
+        margin-top: -25px;
+        border: 2px solid var(--neon);
+        border-radius: 50%;
+        box-shadow: 0 0 15px var(--neon);
+        transition: transform 0.1s ease-out;
     }
   </style>
 </head>
 <body class="text-white h-full flex flex-col">
 
-  <div id="spray-follower">
-    <svg viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="40" stroke="#00f3ff" stroke-width="2" fill="none" opacity="0.5" class="can-color-stroke"/>
-      <circle cx="50" cy="50" r="5" fill="#00f3ff" class="can-color-fill"/>
-    </svg>
-  </div>
+  <div id="spray-cursor"></div>
 
-  <div class="fixed top-4 left-4 z-50 flex gap-4 ui-overlay bg-black/50 p-3 rounded-xl border border-white/10">
-    <input type="color" id="color-picker" value="#00f3ff" class="w-10 h-10 rounded-lg border-none bg-transparent cursor-pointer">
-    <div class="flex flex-col justify-center">
-        <span class="text-[10px] text-gray-400 font-mono">COLOR_SELECTION</span>
+  <div class="fixed top-4 left-4 z-50 flex items-center gap-4 ui-overlay bg-black/80 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
+    <div class="flex flex-col">
+        <label class="text-[10px] text-cyan-400 font-bold mb-1 ml-1 uppercase tracking-tighter">Color_Select</label>
+        <input type="color" id="color-picker" value="#00f3ff" class="w-12 h-12 rounded-lg border-none bg-transparent cursor-pointer">
     </div>
+    
+    <div class="h-10 w-[1px] bg-white/10 mx-2"></div>
+    
+    <button onclick="clearCanvas()" class="flex items-center gap-2 bg-red-500/20 hover:bg-red-500/40 text-red-500 px-4 py-2 rounded-lg transition-all border border-red-500/30">
+        <i data-lucide="trash-2" class="w-4 h-4"></i>
+        <span class="text-xs font-bold uppercase">Limpar</span>
+    </button>
   </div>
 
   <canvas id="graffiti-canvas"></canvas>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Inicializar Ícones
       lucide.createIcons();
 
       const canvas = document.getElementById('graffiti-canvas');
       const ctx = canvas.getContext('2d');
       const colorPicker = document.getElementById('color-picker');
-      const follower = document.getElementById('spray-follower');
+      const cursor = document.getElementById('spray-cursor');
 
-      function resize() {
+      function initCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        // Redesenhar fundo escuro após resize
         ctx.fillStyle = '#0a0a0a';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
-      window.addEventListener('resize', resize);
-      resize();
+      
+      window.addEventListener('resize', initCanvas);
+      initCanvas();
 
-      let painting = false;
+      let isPainting = false;
 
-      // Seguir o mouse/touch
-      const move = (e) => {
+      // Movimentação do Cursor e Pintura
+      const handleMove = (e) => {
         const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
         const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-        follower.style.left = x + 'px';
-        follower.style.top = y + 'px';
+        
+        cursor.style.left = `${x}px`;
+        cursor.style.top = `${y}px`;
 
-        if (painting) spray(x, y);
+        if (isPainting) {
+          paintSpray(x, y);
+        }
       };
 
-      // Lógica de Spray Neon
-      function spray(x, y) {
-        const radius = 20;
-        const density = 40;
+      // Lógica de Spray Realista
+      function paintSpray(x, y) {
+        const radius = 25;
+        const density = 50;
         ctx.fillStyle = colorPicker.value;
         
         for (let i = 0; i < density; i++) {
           const offsetX = (Math.random() - 0.5) * 2 * radius;
           const offsetY = (Math.random() - 0.5) * 2 * radius;
-          if (Math.sqrt(offsetX*offsetX + offsetY*offsetY) < radius) {
-            ctx.globalAlpha = Math.random() * 0.5;
-            ctx.fillRect(x + offsetX, y + offsetY, 2, 2);
+          
+          // Mantém as partículas dentro do círculo
+          if (Math.sqrt(offsetX * offsetX + offsetY * offsetY) < radius) {
+            ctx.globalAlpha = Math.random() * 0.4;
+            ctx.fillRect(x + offsetX, y + offsetY, 1.5, 1.5);
           }
         }
       }
 
-      // Eventos de Input
-      window.addEventListener('mousedown', () => painting = true);
-      window.addEventListener('mouseup', () => painting = false);
-      window.addEventListener('mousemove', move);
+      // Eventos de Mouse
+      window.addEventListener('mousedown', () => { isPainting = true; cursor.style.transform = 'scale(0.8)'; });
+      window.addEventListener('mouseup', () => { isPainting = false; cursor.style.transform = 'scale(1)'; });
+      window.addEventListener('mousemove', handleMove);
       
-      window.addEventListener('touchstart', (e) => { painting = true; move(e); });
-      window.addEventListener('touchend', () => painting = false);
-      window.addEventListener('touchmove', move);
+      // Eventos de Touch (Mobile)
+      window.addEventListener('touchstart', (e) => { isPainting = true; handleMove(e); });
+      window.addEventListener('touchend', () => { isPainting = false; });
+      window.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); }, { passive: false });
 
-      // Atualizar cor do cursor
+      // Atualizar cor do cursor neon
       colorPicker.addEventListener('input', () => {
-        const c = colorPicker.value;
-        document.querySelector('.can-color-fill').setAttribute('fill', c);
-        document.querySelector('.can-color-stroke').setAttribute('stroke', c);
+        cursor.style.borderColor = colorPicker.value;
+        cursor.style.boxShadow = `0 0 15px ${colorPicker.value}`;
       });
 
-      // Bloqueio de Segurança Senior
-      document.addEventListener('contextmenu', e => e.preventDefault());
+      // Função global para limpar
+      window.clearCanvas = () => {
+        if(confirm("Deseja apagar sua arte?")) {
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+      };
     });
   </script>
 </body>

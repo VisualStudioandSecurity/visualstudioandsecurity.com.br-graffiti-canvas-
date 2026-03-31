@@ -1,1 +1,74 @@
 
+<!doctype html>
+<html lang="pt-br" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Studio Games | GDevelop Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --accent: #00f2ff; --bg: #050505; --card: #0d0d0d; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; }
+        .gradient-text { background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .game-card { background: var(--card); border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; overflow: hidden; }
+        .game-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="max-w-5xl mx-auto px-6 py-12">
+        
+        <header class="flex justify-between items-center mb-16">
+            <div>
+                <h1 class="text-3xl font-black gradient-text">VISUAL STUDIO <span class="text-white">GAMES</span></h1>
+                <p class="text-gray-500 text-sm mono">Experimental No-Code Gaming Lab</p>
+            </div>
+            <a href="https://github.com/kovaliosky" class="text-gray-400 hover:text-cyan-400 transition">
+                <i data-lucide="github"></i>
+            </a>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <div class="game-card rounded-2xl">
+                <div class="aspect-video bg-gray-900 flex items-center justify-center border-b border-white/5">
+                    <i data-lucide="gamepad-2" class="w-12 h-12 text-gray-700"></i>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xl font-bold">Pedro Pedro Game</h3>
+                        <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded">MOBILE/WEB</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Plataforma 2D desenvolvido no GDevelop com mecânicas de ritmo e colisão avançada.</p>
+                    <div class="flex gap-4">
+                        <button class="bg-white text-black px-4 py-2 rounded-lg text-xs font-bold hover:bg-cyan-400 transition">JOGAR AGORA</button>
+                        <button class="border border-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/5 transition">DOCS</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card rounded-2xl opacity-50">
+                <div class="aspect-video bg-gray-900 flex items-center justify-center">
+                    <i data-lucide="lock" class="w-12 h-12 text-gray-800"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-600">Em Desenvolvimento...</h3>
+                    <p class="text-gray-600 text-sm">Novo projeto de combate top-down em fase de prototipagem.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="mt-20 text-center">
+            <a href="URL_DO_SEU_PORTFOLIO_PRINCIPAL" class="inline-flex items-center gap-2 text-gray-500 hover:text-white transition text-sm">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar para Kovaliosky DeV
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

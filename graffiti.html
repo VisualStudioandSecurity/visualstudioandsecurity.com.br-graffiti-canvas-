@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Graffiti | Visual Studio Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body, html { margin: 0; padding: 0; overflow: hidden; background: #050505; height: 100%; font-family: 'Rajdhani', sans-serif; }
+        canvas { display: block; background: #000; touch-action: none; cursor: crosshair; }
+        
+        .tools {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(20,20,20,0.9);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Efeito de neon para o botão limpar */
+        .btn-clear {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 70, 85, 0);
+        }
+        .btn-clear:hover {
+            background-color: #ff4655 !important;
+            border-color: #ff4655 !important;
+            box-shadow: 0 0 15px rgba(255, 70, 85, 0.5);
+        }
+
+        /* Efeito de neon para o botão voltar */
+        .btn-back {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0);
+        }
+        .btn-back:hover {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tools flex items-center gap-4">
+        
+        <a href="index.html" class="btn-back text-white/70 text-xs font-bold border border-white/10 px-3 py-2.5 rounded-lg flex items-center gap-2 transition">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        </a>
+
+        <div class="relative group">
+            <input type="color" id="colorPicker" value="#00f2ff" class="w-11 h-11 cursor-pointer bg-transparent border-none rounded-full overflow-hidden">
+            <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-cyan-400 opacity-0 group-hover:opacity-100 transition">COR</span>
+        </div>
+        
+        <button onclick="clearCanvas()" class="btn-clear ml-2 text-white text-xs font-bold border border-white/20 px-4 py-2.5 rounded-lg bg-black/50 transition flex items-center gap-2">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            LIMPAR
+        </button>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+
+        // Configuração inicial do Canvas
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Preenche o fundo com a cor base
+            ctx.fillStyle = '#050505';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        window.addEventListener('resize', resize);
+        resize(); // Chama no início
+
+        // Lógica de Desenho
+        let drawing = false;
+
+        const start = (e) => { 
+            drawing = true; 
+            draw(e); // Começa a desenhar no ponto do clique
+        };
+        const end = () => { 
+            drawing = false; 
+            ctx.beginPath(); // Reseta o caminho para não ligar as linhas
+        };
+        
+        const draw = (e) => {
+            if (!drawing) return;
+            
+            // Pega as coordenadas corretas (Mouse ou Touch)
+            const x = e.clientX || (e.touches && e.touches[0].clientX);
+            const y = e.clientY || (e.touches && e.touches[0].clientY);
+
+            // Se não pegou coordenada (ex: touchend), sai
+            if (x === undefined || y === undefined) return;
+
+            // Configuração do "Spray Neon"
+            ctx.lineWidth = 15; // Grossura da linha
+            ctx.lineCap = 'round'; // Ponta redonda
+            ctx.strokeStyle = colorPicker.value; // Cor do seletor
+
+            // Efeito de Neon (Brilho)
+            ctx.shadowBlur = 12; // Intensidade do brilho
+            ctx.shadowColor = colorPicker.value; // Cor do brilho
+            
+            // Desenha a linha
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        };
+
+        // Função Limpar (Refatorada)
+        function clearCanvas() {
+            ctx.shadowBlur = 0; // Desativa o brilho para limpar
+            ctx.fillStyle = '#050505';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Eventos de Mouse
+        canvas.addEventListener('mousedown', start);
+        canvas.addEventListener('mouseup', end);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseleave', end); // Para de desenhar se sair da tela
+
+        // Eventos de Touch (Mobile)
+        canvas.addEventListener('touchstart', (e) => { 
+            e.preventDefault(); // Impede o scroll da página ao desenhar
+            start(e); 
+        });
+        canvas.addEventListener('touchend', end);
+        canvas.addEventListener('touchmove', (e) => { 
+            e.preventDefault(); 
+            draw(e); 
+        });
+
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+    </script>
+</body>
+</html>

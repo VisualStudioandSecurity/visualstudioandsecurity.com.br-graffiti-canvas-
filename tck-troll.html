@@ -1,167 +1,73 @@
-import time
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TcK10: MEGA TROLL | Visual Studio Games</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        body { background: #0f1923; color: #e5e7eb; font-family: 'Orbitron', sans-serif; }
+        .quiz-container { background: rgba(0, 0, 0, 0.4); border: 1px solid #f97316; }
+        .btn-option { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; width: 100%; text-align: left; padding: 15px; margin-bottom: 10px; }
+        .btn-option:hover { background: #ea580c; color: white; border-color: #ea580c; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div id="game-box" class="quiz-container p-8 rounded-lg max-w-2xl w-full">
+        <h1 class="text-2xl font-black text-orange-500 mb-2 uppercase italic">🔥 TcK10: MEGA TROLL 🔥</h1>
+        <p class="text-xs text-gray-500 mb-6 tracking-widest uppercase italic">Protocolo Bíceps // 2026</p>
+        <div id="quiz-content">
+            </div>
+    </div>
 
-def exibir_titulo():
-    print("=" * 60)
-    print("      🔥 O MEGA JOGO TROLL DO TcK10: EDIÇÃO BÍCEPS 🔥")
-    print("=" * 60)
-    print(" Regra: A lógica é sua inimiga. O absurdo é sua salvação.")
-    print("=" * 60)
-    time.sleep(1)
+    <script>
+        const questoes = [
+            { p: "Se o TcK10 comprar um teclado novo, qual a primeira tecla que ele aperta?", o: ["A) W (para andar)", "B) A tecla 'Enter' do micro-ondas", "C) Esc (para sair)", "D) Espaço"], c: 1, r: "Conexão com eletrodomésticos zera o lag!" },
+            { p: "Quantos segundos tem um minuto de silêncio no chat do TcK?", o: ["A) 60 segundos", "B) 3 Melancias", "C) Zero, o chat nunca para", "D) 10 segundos"], c: 1, r: "Frutas são a unidade de medida padrão no chat." },
+            { p: "Qual a dieta oficial para manter o maior bíceps do Valorant?", o: ["A) Proteína e Whey", "B) Pixels fritos e suco de Wi-Fi", "C) Frango e batata doce", "D) Ele não come"], c: 1, r: "Nutrientes digitais para músculos virtuais." }
+            // Adicione as outras perguntas seguindo este modelo
+        ];
 
-def jogar_quiz():
-    questoes = [
-        {
-            "pergunta": "Se o TcK10 comprar um teclado novo, qual a primeira tecla que ele aperta?",
-            "opcoes": ["A) W (para andar)", "B) A tecla 'Enter' do micro-ondas", "C) Esc (para sair)", "D) Espaço"],
-            "correta": "B",
-            "rationale": "Todo gamer de elite sabe que a conexão com eletrodomésticos zera o lag!"
-        },
-        {
-            "pergunta": "Quantos segundos tem um minuto de silêncio no chat do TcK?",
-            "opcoes": ["A) 60 segundos", "B) 3 Melancias", "C) Zero, o chat nunca para", "D) 10 segundos"],
-            "correta": "B",
-            "rationale": "Frutas são a unidade de medida padrão para o tempo no chat."
-        },
-        {
-            "pergunta": "O que acontece se o TcK10 tomar café com energético antes da live?",
-            "opcoes": ["A) Ele joga muito bem", "B) Ele fala em código binário com as paredes", "C) Ele fica com sono", "D) O PC explode"],
-            "correta": "B",
-            "rationale": "A hiperatividade atinge o nível de comunicação direta com o Windows."
-        },
-        {
-            "pergunta": "Qual a dieta oficial para manter o maior bíceps do Valorant?",
-            "opcoes": ["A) Proteína e Whey", "B) Pixels fritos e suco de Wi-Fi", "C) Frango e batata doce", "D) Ele não come"],
-            "correta": "B",
-            "rationale": "Nutrientes digitais são essenciais para músculos virtuais."
-        },
-        {
-            "pergunta": "Se um pato perde a pata, o que ele faz?",
-            "opcoes": ["A) Fica manco", "B) Pede o divórcio", "C) Compra uma prótese", "D) Nada"],
-            "correta": "B",
-            "rationale": "Porque a 'pata' era a esposa dele. Humor refinado!"
-        },
-        {
-            "pergunta": "Como o TcK10 desce do Radiante para o Ferro em um dia?",
-            "opcoes": ["A) Jogando mal", "B) Virando o monitor de cabeça para baixo", "C) Pedindo para a Riot", "D) Usando volante"],
-            "correta": "B",
-            "rationale": "A gravidade puxa os pontos de classificação para o chão."
-        },
-        {
-            "pergunta": "Qual é a capital do Reino do TcK?",
-            "opcoes": ["A) Ji-Paraná", "B) Twitchlândia do Sul", "C) São Paulo", "D) Haven"],
-            "correta": "B",
-            "rationale": "A sede fica entre o chat e os donates."
-        },
-        {
-            "pergunta": "O que o TcK10 usa para pentear o cabelo?",
-            "opcoes": ["A) Um pente", "B) O vento de uma Spike explodindo", "C) Uma escova", "D) Ele não penteia"],
-            "correta": "B",
-            "rationale": "O estilo 'impacto radiante' é a última moda."
-        },
-        {
-            "pergunta": "Se 10 TcKs jogam contra 10 TcKs, quem ganha?",
-            "opcoes": ["A) O time azul", "B) A operadora de internet", "C) Empate", "D) O chat"],
-            "correta": "B",
-            "rationale": "Tanta massa muscular conectada causaria um colapso na rede mundial."
-        },
-        {
-            "pergunta": "Qual o som que o teclado do TcK faz quando ele clica?",
-            "opcoes": ["A) Click", "B) 'Gritinho de Pavor'", "C) Toc", "D) Silencioso"],
-            "correta": "B",
-            "rationale": "As teclas têm medo da força bruta de seus dedos."
-        },
-        {
-            "pergunta": "Por que o TcK10 nunca perde a hora?",
-            "opcoes": ["A) Usa despertador", "B) O tempo tem medo de passar por ele e ser cobrado", "C) Ele não dorme", "D) Ele sempre perde"],
-            "correta": "B",
-            "rationale": "O tempo respeita a hierarquia do bíceps."
-        },
-        {
-            "pergunta": "Qual é o animal de estimação ideal para o TcK?",
-            "opcoes": ["A) Um cachorro", "B) Um mouse que come gatos", "C) Um gato", "D) Um papagaio"],
-            "correta": "B",
-            "rationale": "Inverter a cadeia alimentar é o objetivo de todo pro player."
-        },
-        {
-            "pergunta": "Qual o nome do movimento de braço do TcK para pegar água?",
-            "opcoes": ["A) Flexão", "B) Teletransporte de H2O", "C) Extensão", "D) Pegar o copo"],
-            "correta": "B",
-            "rationale": "A velocidade do movimento quebra as leis da física."
-        },
-        {
-            "pergunta": "Qual a identidade do '10' no nome TcK10?",
-            "opcoes": ["A) Camisa de futebol", "B) Toneladas que ele levanta com o mindinho", "C) Dia do aniversário", "D) Nota 10"],
-            "correta": "B",
-            "rationale": "A escala de força dele é medida em milhares de quilos."
-        },
-        {
-            "pergunta": "O que acontece se digitar 'TcK' ao contrário no chat?",
-            "opcoes": ["A) KcT", "B) O Windows atualiza sozinho para o Windows 15", "C) Você é banido", "D) Nada acontece"],
-            "correta": "B",
-            "rationale": "O sistema entra em pânico e tenta evoluir."
-        },
-        {
-            "pergunta": "Qual o principal ingrediente do café do TcK?",
-            "opcoes": ["A) Açúcar", "B) Lágrimas de duelistas que perderam o X1", "C) Pó de café", "D) Leite"],
-            "correta": "B",
-            "rationale": "O sabor da vitória é levemente salgado e revigorante."
-        },
-        {
-            "pergunta": "Se o TcK fosse um agente, qual seria sua habilidade passiva?",
-            "opcoes": ["A) Correr rápido", "B) Intimidar a Spike fazendo ela desarmar sozinha", "C) Ter mais vida", "D) Invisibilidade"],
-            "correta": "B",
-            "rationale": "A Spike teme a pressão psicológica do bíceps."
-        },
-        {
-            "pergunta": "Como o TcK ganha uma rodada sem disparar um tiro?",
-            "opcoes": ["A) No tempo", "B) Fazendo flexão até o inimigo desistir da carreira", "C) Desarmando", "D) Inimigo cai"],
-            "correta": "B",
-            "rationale": "A superioridade física causa dano moral irreversível."
-        },
-        {
-            "pergunta": "Onde o TcK guarda seus troféus virtuais?",
-            "opcoes": ["A) Na estante", "B) Na pasta 'Trabalhos de Escola' com 50 senhas", "C) Na nuvem", "D) Não tem troféus"],
-            "correta": "B",
-            "rationale": "Onde ninguém jamais ousaria procurar."
-        },
-        {
-            "pergunta": "O que o TcK diz antes de desligar a live?",
-            "opcoes": ["A) Tchau galera", "B) O último a sair apaga a luz do servidor", "C) Até amanhã", "D) Vou treinar bíceps"],
-            "correta": "B",
-            "rationale": "Economia de energia digital é a prioridade final."
+        let current = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            if(current >= questoes.length) {
+                showResult();
+                return;
+            }
+            const q = questoes[current];
+            let html = `<p class="text-lg mb-6">${q.p}</p>`;
+            q.o.forEach((opt, index) => {
+                html += `<button class="btn-option" onclick="check(${index})">${opt}</button>`;
+            });
+            document.getElementById('quiz-content').innerHTML = html;
         }
-    ]
 
-    pontuacao = 0
-    total = len(questoes)
+        function check(index) {
+            const q = questoes[current];
+            if(index === q.c) {
+                score++;
+                alert("✅ ACERTOU! " + q.r);
+            } else {
+                alert("❌ ERROU! O absurdo era a resposta correta.");
+            }
+            current++;
+            loadQuestion();
+        }
 
-    for i, q in enumerate(questoes):
-        print(f"\nPergunta {i+1}/{total}:")
-        print(q["pergunta"])
-        for opcao in q["opcoes"]:
-            print(opcao)
-        
-        resposta = input("Sua resposta (A, B, C ou D): ").upper().strip()
+        function showResult() {
+            let rank = score === questoes.length ? "RADIANTE ABSURDO" : "FERRO LÓGICO";
+            document.getElementById('quiz-content').innerHTML = `
+                <div class="text-center">
+                    <h2 class="text-4xl font-bold mb-4">${score}/${questoes.length}</h2>
+                    <p class="text-orange-500 font-bold tracking-widest">RANK: ${rank}</p>
+                    <button onclick="location.href='index.html'" class="mt-8 text-xs underline">VOLTAR AO HUB</button>
+                </div>`;
+        }
 
-        if resposta == q["correta"]:
-            print(f"✅ ACERTOU! {q['rationale']}")
-            pontuacao += 1
-        else:
-            print(f"❌ ERROU! A lógica dizia {resposta}, mas o absurdo era {q['correta']}.")
-        
-        time.sleep(0.5)
-
-    print("\n" + "=" * 60)
-    print(f"FIM DE JOGO! Sua pontuação: {pontuacao}/{total}")
-    
-    if pontuacao == total:
-        print("🏆 RANK: RADIANTE ABSURDO! Seu bíceps é imenso!")
-    elif pontuacao > total // 2:
-        print("🥈 RANK: IMORTAL DA TROLLAGEM. Quase um mestre.")
-    else:
-        print("🤡 RANK: FERRO LÓGICO. Você ainda pensa demais.")
-    print("=" * 60)
-
-if __name__ == "__main__":
-    exibir_titulo()
-    jogar_quiz()
+        loadQuestion();
+    </script>
+</body>
+</html>

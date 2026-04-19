@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TcK10: Quiz | Visual Studio Games</title>
+    <title>TcK10: DEFINITIVO | Visual Studio Games</title>
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
@@ -93,4 +93,14 @@
             let rank = score === questions.length ? "RADIANTE ABSURDO" : (score > 5 ? "IMORTAL TROLL" : "FERRO LÓGICO");
             container.innerHTML = `
                 <div class="text-center py-10">
-                    <h1 class="text-5xl font-black text-
+                    <h1 class="text-5xl font-black text-orange-500 mb-4">${score}/${questions.length}</h1>
+                    <p class="text-xl italic mb-8">RANK: ${rank}</p>
+                    <button onclick="location.href='index.html'" class="bg-orange-600 px-8 py-3 font-bold uppercase italic text-sm hover:bg-orange-400">Retornar ao Hub</button>
+                </div>
+            `;
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>

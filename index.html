@@ -31473,631 +31473,169 @@
 
 
 
-
-
 <!doctype html>
-<html lang="en" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space Shooter</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&amp;display=swap" rel="stylesheet">
-  <style>
-    html, body { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Orbitron', sans-serif; background: #020617; }
-    
-    @keyframes explode {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(2.5); opacity: 0; }
-    }
-    
-    @keyframes shimmer {
-      0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 4px currentColor); }
-      50% { opacity: 1; filter: drop-shadow(0 0 16px currentColor); }
-    }
+<html lang="pt-BR" class="h-full">
+ <head>
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Studio Games | Kv's Enterprise</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+    :root { --valorant-red: #ff4655; }
+    .orbitron { font-family: 'Orbitron', sans-serif; }
+    .mono { font-family: 'Courier New', monospace; }
+    body { background: #0f1923; color: #e5e7eb; margin: 0; }
+    .game-card { border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
+    .game-card:hover { border-color: var(--valorant-red); background: rgba(0, 0, 0, 0.5); }
+    .btn-play { background: var(--valorant-red); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); transition: 0.3s; display: inline-block; padding: 8px 32px; font-size: 14px; font-weight: 900; font-style: italic; color: white; text-decoration: none; cursor: pointer; border: none; }
+    .btn-play:hover { filter: brightness(1.2); padding-right: 48px; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .terminal-line { opacity: 0; animation: type-in 0.5s ease forwards; }
+    @keyframes type-in { to { opacity: 1; } }
+  </style>
 
-    @keyframes glow-pulse {
-      0%, 100% { filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 16px currentColor); }
-      50% { filter: drop-shadow(0 0 20px currentColor) drop-shadow(0 0 40px currentColor); }
-    }
-
-    @keyframes rainbow-border {
-      0% { border-color: #10b981; }
-      25% { border-color: #06b6d4; }
-      50% { border-color: #8b5cf6; }
-      75% { border-color: #ec4899; }
-      100% { border-color: #10b981; }
-    }
-
-    .premium-glow {
-      animation: glow-pulse 1.5s ease-in-out infinite !important;
-    }
-
-    .premium-border {
-      animation: rainbow-border 3s linear infinite !important;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-    
-    .explosion { position: absolute; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, #fbbf24, #f97316, transparent); animation: explode 0.4s ease-out forwards; pointer-events: none; }
-    .bullet { position: absolute; width: 4px; height: 14px; background: linear-gradient(to top, #06b6d4, #a5f3fc); border-radius: 2px; box-shadow: 0 0 8px #06b6d4; }
-    .enemy { position: absolute; }
-    .premium-ship { animation: shimmer 2s ease-in-out infinite; }
-  </style>
-  <style>body { box-sizing: border-box; }</style>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full bg-gray-950 relative select-none">
-  <div id="game-wrapper" class="w-full h-full relative overflow-hidden"><!-- Starfield -->
-   <canvas id="starfield" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 0;"></canvas><!-- Game Container -->
-   <div id="game-container" class="absolute inset-0 w-full h-full" style="z-index: 1;"><!-- Player Ship -->
-    <div id="player" class="absolute" style="z-index: 50; width: 48px; height: 56px;"></div><!-- HUD -->
-    <div id="hud" class="absolute top-3 left-3 right-3 flex justify-between items-center z-40 pointer-events-none">
-     <div class="flex gap-4 items-center"><span class="text-cyan-400 text-xs font-bold tracking-widest">SCORE</span> <span id="score" class="text-white text-xl font-black">0</span>
-     </div><span id="game-title-hud" class="text-slate-400 text-xs tracking-widest font-bold">SPACE SHOOTER</span>
-     <div class="flex gap-2 items-center"><span class="text-rose-500 text-xs font-bold tracking-widest">LIVES</span> <span id="lives" class="text-white text-xl font-black">3</span>
-     </div>
-    </div><!-- Wingman Button --> <button id="wingman-btn" class="absolute bottom-5 right-5 w-14 h-14 bg-gradient-to-br from-green-500 to-green-700 border-0 rounded-full cursor-pointer text-2xl z-30 hidden hover:scale-110 transition-transform" style="box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);">🛸</button>
-   </div><!-- Start Screen -->
-   <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center z-50" style="background: rgba(2, 6, 23, 0.85);">
-    <h1 id="title-text" class="text-4xl md:text-5xl font-black text-cyan-400 mb-2" style="text-shadow: 0 0 30px rgba(6, 182, 212, 0.5);">SPACE SHOOTER</h1>
-    <p class="text-slate-400 text-sm mb-8 tracking-widest">Destroy all enemy ships!</p>
-    <div class="flex gap-3 mb-5"><button onclick="window.gameState.startGame()" class="px-10 py-3 bg-gradient-to-br from-cyan-500 to-cyan-700 text-white font-bold rounded-lg cursor-pointer tracking-widest text-sm hover:scale-105 transition-transform" style="box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);">PLAY</button> <button onclick="window.gameState.openShop()" class="px-10 py-3 bg-gradient-to-br from-amber-500 to-amber-700 text-white font-bold rounded-lg cursor-pointer tracking-widest text-sm hover:scale-105 transition-transform" style="box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);">🛸 SHOP</button> <button onclick="window.gameState.toggleSettings()" class="px-10 py-3 bg-gradient-to-br from-slate-500 to-slate-700 text-white font-bold rounded-lg cursor-pointer tracking-widest text-sm hover:scale-105 transition-transform" style="box-shadow: 0 0 25px rgba(100, 116, 139, 0.4);">⚙️</button>
-    </div>
-    <p class="text-slate-500 text-xs mt-5">Mouse to move · Click to shoot</p>
-   </div><!-- Settings Screen -->
-   <div id="settings-screen" class="absolute inset-0 flex items-center justify-center z-50 hidden" style="background: rgba(2, 6, 23, 0.95);">
-    <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-2xl border-2 border-cyan-400 max-w-sm max-h-96 overflow-y-auto">
-     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-black text-cyan-400 m-0">SETTINGS</h2><button onclick="window.gameState.toggleSettings()" class="bg-transparent border-0 text-slate-400 text-2xl cursor-pointer w-8 h-8 flex items-center justify-center">✕</button>
-     </div>
-     <div class="mb-6"><label class="block text-cyan-300 text-xs font-bold mb-2 tracking-widest">DIFFICULTY</label>
-      <div class="flex gap-2"><button class="difficulty-btn flex-1 py-2 bg-slate-700 border-2 border-slate-600 text-slate-300 font-bold rounded text-xs cursor-pointer transition-all" data-difficulty="easy" onclick="window.gameState.setDifficulty('easy')">EASY</button> <button class="difficulty-btn active flex-1 py-2 bg-gradient-to-br from-cyan-500 to-cyan-700 border-2 border-cyan-500 text-white font-bold rounded text-xs cursor-pointer transition-all" data-difficulty="normal" onclick="window.gameState.setDifficulty('normal')">NORMAL</button> <button class="difficulty-btn flex-1 py-2 bg-slate-700 border-2 border-slate-600 text-slate-300 font-bold rounded text-xs cursor-pointer transition-all" data-difficulty="hard" onclick="window.gameState.setDifficulty('hard')">HARD</button>
-      </div>
-     </div>
-     <div class="mb-6"><label class="block text-cyan-300 text-xs font-bold mb-2 tracking-widest">VOLUME: <span id="volume-value">100</span>%</label> <input type="range" id="volume-slider" min="0" max="100" value="100" onchange="window.gameState.setVolume(this.value)" class="w-full cursor-pointer" style="accent-color: #06b6d4;">
-     </div>
-     <div class="mb-6"><label class="block text-cyan-300 text-xs font-bold mb-2 tracking-widest">SHIP SPEED: <span id="speed-value">1</span>x</label> <input type="range" id="speed-slider" min="0.5" max="2" step="0.1" value="1" onchange="window.gameState.setPlayerSpeed(this.value)" class="w-full cursor-pointer" style="accent-color: #06b6d4;">
-     </div><button onclick="window.gameState.toggleSettings()" class="w-full py-3 bg-gradient-to-br from-cyan-500 to-cyan-700 text-white font-bold rounded cursor-pointer tracking-widest text-sm" style="box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);">BACK</button>
-    </div>
-   </div><!-- Game Over Screen -->
-   <div id="gameover-screen" class="absolute inset-0 flex items-center justify-center z-50 hidden" style="background: rgba(2, 6, 23, 0.9);">
-    <div class="text-center">
-     <h2 class="text-5xl font-black text-rose-500 mb-2">GAME OVER</h2>
-     <p class="text-slate-400 text-sm mb-1">Final Score</p>
-     <p id="final-score" class="text-white text-6xl font-black mb-2">0</p>
-     <p id="coins-earned" class="text-amber-500 text-xl font-bold mb-6">+0 Coins</p>
-     <div class="flex gap-3 justify-center"><button onclick="window.gameState.startGame()" class="px-8 py-3 bg-gradient-to-br from-rose-500 to-rose-700 text-white font-bold rounded-lg cursor-pointer tracking-widest hover:scale-105 transition-transform" style="box-shadow: 0 0 25px rgba(244, 63, 94, 0.4);">PLAY AGAIN</button> <button onclick="window.gameState.goToUpgrades()" class="px-8 py-3 bg-gradient-to-br from-slate-500 to-slate-700 text-white font-bold rounded-lg cursor-pointer tracking-widest hover:scale-105 transition-transform" style="box-shadow: 0 0 25px rgba(100, 116, 139, 0.4);">UPGRADES</button>
-     </div>
-    </div>
-   </div><!-- Shop Screen -->
-   <div id="shop-screen" class="absolute inset-0 flex items-center justify-center z-50 hidden overflow-y-auto" style="background: rgba(2, 6, 23, 0.95);">
-    <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-2xl border-2 border-cyan-400 max-w-2xl w-11/12 my-4">
-     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-black text-cyan-400 m-0">🛸 SHIP SHOP</h2>
-      <div class="text-amber-500 text-lg font-black flex gap-2 items-center">
-       <span>💰</span> <span id="shop-coins-display">0</span>
-      </div>
-     </div>
-     <div id="ships-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6"></div>
-     <h3 class="text-cyan-400 font-black text-sm mb-3 tracking-widest">⚡ SPECIAL ABILITIES</h3>
-     <div id="abilities-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4"></div><button onclick="window.gameState.watchAd()" class="w-full py-3 bg-gradient-to-br from-amber-500 to-amber-700 text-white font-bold rounded cursor-pointer tracking-widest mb-3 hover:scale-105 transition-transform" style="box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);">🎬 WATCH AD FOR 1000 💰</button> <button onclick="window.gameState.closeShop()" class="w-full py-3 bg-gradient-to-br from-cyan-500 to-cyan-700 text-white font-bold rounded cursor-pointer tracking-widest" style="box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);">BACK</button>
-    </div>
-   </div><!-- Ad Reward Screen -->
-   <div id="ad-screen" class="absolute inset-0 flex items-center justify-center z-50 hidden" style="background: rgba(2, 6, 23, 0.98);">
-    <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-2xl border-2 border-amber-500 max-w-sm text-center">
-     <h2 class="text-2xl font-black text-amber-500 mb-4">🎬 WATCH AD</h2>
-     <div class="bg-slate-700 p-8 rounded-lg mb-4 border-2 border-amber-400" style="aspect-ratio: 16/9;">
-      <div id="ad-timer" class="text-6xl font-black text-amber-400 mb-2">
-       30
-      </div>
-      <p class="text-slate-300 text-sm">Ad playing...</p>
-     </div>
-     <div class="text-cyan-300 text-lg font-bold mb-6"><span class="text-amber-400 text-3xl">+1000</span>
-      <p class="text-sm mt-2">COINS</p>
-     </div><button id="skip-ad-btn" onclick="window.gameState.skipAd()" class="w-full py-2 bg-slate-600 text-slate-300 font-bold rounded text-sm cursor-pointer hover:bg-slate-500 transition-colors mb-3">SKIP (optional)</button> <button id="close-ad-btn" onclick="window.gameState.closeAdScreen()" class="w-full py-3 bg-gradient-to-br from-cyan-500 to-cyan-700 text-white font-bold rounded cursor-pointer tracking-widest hidden" style="box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);">CLAIM REWARD</button>
-    </div>
-   </div><!-- Upgrades Screen -->
-   <div id="upgrades-screen" class="absolute inset-0 flex items-center justify-center z-50 hidden" style="background: rgba(2, 6, 23, 0.95);">
-    <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-2xl border-2 border-amber-500 max-w-sm max-h-96 overflow-y-auto">
-     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-black text-amber-500 m-0">⭐ UPGRADES</h2>
-      <div class="text-cyan-400 text-lg font-black flex gap-2 items-center">
-       <span class="text-amber-500">💰</span> <span id="coins-display">0</span>
-      </div>
-     </div>
-     <div class="grid gap-4 mb-6">
-      <div class="bg-slate-700 p-4 rounded-lg border-2 border-slate-600 cursor-pointer hover:translate-y-0.5 transition-transform" onclick="window.gameState.buyUpgrade('bulletSpeed')">
-       <div class="flex justify-between items-start mb-2">
-        <div>
-         <h3 class="text-cyan-400 text-sm font-black m-0 mb-1">⚡ BULLET SPEED</h3>
-         <p id="level-bulletSpeed" class="text-slate-400 text-xs m-0">Level: 0/5</p>
-        </div><span id="cost-bulletSpeed" class="text-amber-500 text-lg font-black">⭐ 50</span>
-       </div>
-      </div>
-      <div class="bg-slate-700 p-4 rounded-lg border-2 border-slate-600 cursor-pointer hover:translate-y-0.5 transition-transform" onclick="window.gameState.buyUpgrade('fireRate')">
-       <div class="flex justify-between items-start mb-2">
-        <div>
-         <h3 class="text-cyan-400 text-sm font-black m-0 mb-1">🔥 FIRE RATE</h3>
-         <p id="level-fireRate" class="text-slate-400 text-xs m-0">Level: 0/5</p>
-        </div><span id="cost-fireRate" class="text-amber-500 text-lg font-black">⭐ 75</span>
-       </div>
-      </div>
-      <div class="bg-slate-700 p-4 rounded-lg border-2 border-slate-600 cursor-pointer hover:translate-y-0.5 transition-transform" onclick="window.gameState.buyUpgrade('damage')">
-       <div class="flex justify-between items-start mb-2">
-        <div>
-         <h3 class="text-cyan-400 text-sm font-black m-0 mb-1">💥 DAMAGE</h3>
-         <p id="level-damage" class="text-slate-400 text-xs m-0">Level: 0/5</p>
-        </div><span id="cost-damage" class="text-amber-500 text-lg font-black">⭐ 100</span>
-       </div>
-      </div>
-      <div class="bg-slate-700 p-4 rounded-lg border-2 border-slate-600 cursor-pointer hover:translate-y-0.5 transition-transform" onclick="window.gameState.buyUpgrade('maxHealth')">
-       <div class="flex justify-between items-start mb-2">
-        <div>
-         <h3 class="text-cyan-400 text-sm font-black m-0 mb-1">❤️ HEALTH</h3>
-         <p id="level-maxHealth" class="text-slate-400 text-xs m-0">Level: 0/5</p>
-        </div><span id="cost-maxHealth" class="text-amber-500 text-lg font-black">⭐ 150</span>
-       </div>
-      </div>
-      <div class="bg-slate-700 p-4 rounded-lg border-2 border-slate-600 cursor-pointer hover:translate-y-0.5 transition-transform" onclick="window.gameState.buyUpgrade('shield')">
-       <div class="flex justify-between items-start mb-2">
-        <div>
-         <h3 class="text-cyan-400 text-sm font-black m-0 mb-1">🛡️ SHIELD</h3>
-         <p id="level-shield" class="text-slate-400 text-xs m-0">Level: 0/3</p>
-        </div><span id="cost-shield" class="text-amber-500 text-lg font-black">⭐ 200</span>
-       </div>
-      </div>
-      <div class="bg-slate-700 p-4 rounded-lg border-2 border-slate-600 cursor-pointer hover:translate-y-0.5 transition-transform" onclick="window.gameState.buyUpgrade('dualShot')">
-       <div class="flex justify-between items-start mb-2">
-        <div>
-         <h3 class="text-cyan-400 text-sm font-black m-0 mb-1">👯 DUAL SHOT</h3>
-         <p id="level-dualShot" class="text-slate-400 text-xs m-0">Level: 0/1</p>
-        </div><span id="cost-dualShot" class="text-amber-500 text-lg font-black">⭐ 300</span>
-       </div>
-      </div>
-     </div>
-     <div class="flex gap-3"><button onclick="window.gameState.closeUpgrades()" class="flex-1 py-3 bg-gradient-to-br from-cyan-500 to-cyan-700 text-white font-bold rounded cursor-pointer tracking-widest text-sm" style="box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);">BACK</button> <button onclick="window.gameState.resetUpgrades()" class="flex-1 py-3 bg-gradient-to-br from-slate-500 to-slate-700 text-white font-bold rounded cursor-pointer tracking-widest text-sm">RESET</button>
-     </div>
-    </div>
-   </div>
-  </div>
-  <script>
-    // === GAME STATE & CONFIG ===
-    const gameState = window.gameState = {
-      running: false,
-      score: 0,
-      lives: 3,
-      coins: 0,
-      currentShipId: 'delta',
-      difficulty: 'normal',
-      volume: 1,
-      playerSpeed: 1,
-      
-      // Game objects
-      playerX: 0,
-      playerY: 0,
-      bullets: [],
-      enemies: [],
-      wingmanActive: false,
-      wingmanTimer: 0,
-      wingmanElement: null,
-      
-      // Timers
-      enemySpawnTimer: 0,
-      lastShotTime: 0,
-      lastFrameTime: 0,
-      animFrame: null,
-      
-      // Elements
-      container: null,
-      player: null,
-      
-      // Audio
-      audioCtx: null
-    };
-
-    // === ABILITIES DATABASE ===
-    const abilities = {
-      shotgun: {
-        id: 'shotgun',
-        name: 'SHOTGUN SPREAD',
-        icon: '🔫',
-        description: 'Bullets spread in a cone',
-        coinCost: 300,
-        adCost: 1,
-        owned: false,
-        active: false
-      },
-      wingman: {
-        id: 'wingman',
-        name: 'WINGMAN',
-        icon: '🛸',
-        description: 'Second ship for 60 sec',
-        coinCost: 500,
-        adCost: 2,
-        owned: false,
-        active: false,
-        duration: 60000,
-        timer: 0
-      },
-      shield: {
-        id: 'shield',
-        name: 'SHIELD BOOST',
-        icon: '🛡️',
-        description: '+5 Lives permanently',
-        coinCost: 400,
-        adCost: 1,
-        owned: false,
-        active: false,
-        purchased: false
-      }
-    }
-
-    function renderAbilities() {
-      const grid = document.getElementById('abilities-grid');
-      grid.innerHTML = '';
-      
-      Object.values(abilities).forEach(ability => {
-        const card = document.createElement('div');
-        card.className = 'bg-slate-700 p-3 rounded-lg border-2 border-slate-600 text-center cursor-pointer hover:scale-105 transition-transform';
-        
-        if (ability.owned || ability.purchased) {
-          card.style.borderColor = '#10b981';
-          card.style.background = 'linear-gradient(135deg, #1e293b, #334155)';
-          card.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.3)';
-        }
-        
-        card.innerHTML = `
-          <div class="text-3xl mb-2">${ability.icon}</div>
-          <h3 class="font-black text-xs text-cyan-400 m-0 mb-1">${ability.name}</h3>
-          <p class="text-slate-400 text-xs m-0 mb-2">${ability.description}</p>
-          <div class="flex gap-2 justify-center text-xs font-bold">
-            <button class="flex-1 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded transition-colors" onclick="window.gameState.buyAbility('${ability.id}', 'coin')">💰 ${ability.coinCost}</button>
-            <button class="flex-1 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded transition-colors" onclick="window.gameState.buyAbilityAd('${ability.id}')">🎬 ${ability.adCost}</button>
-          </div>
-          ${(ability.owned || ability.purchased) ? '<p class="text-green-400 text-xs font-bold mt-2">✓ OWNED</p>' : ''}
-        `;
-        
-        grid.appendChild(card);
-      });
-    }
-
-    gameState.buyAbility = function(abilityId, method) {
-      const ability = abilities[abilityId];
-      if (!ability) return;
-      
-      if (ability.owned || ability.purchased) {
-        if (abilityId === 'shotgun') {
-          abilities.shotgun.active = !abilities.shotgun.active;
-          renderAbilities();
-          saveGame();
-        } else if (abilityId === 'wingman' && gameState.running) {
-          activateWingman();
-        }
-        return;
-      }
-      
-      if (method === 'coin' && gameState.coins >= ability.coinCost) {
-        gameState.coins -= ability.coinCost;
-        handleAbilityPurchase(ability);
-      }
-    };
-
-    gameState.buyAbilityAd = function(abilityId) {
-      const ability = abilities[abilityId];
-      if (!ability) return;
-      
-      if (ability.owned || ability.purchased) {
-        if (abilityId === 'shotgun') {
-          abilities.shotgun.active = !abilities.shotgun.active;
-          renderAbilities();
-          saveGame();
-        } else if (abilityId === 'wingman' && gameState.running) {
-          activateWingman();
-        }
-        return;
-      }
-      
-      gameState.adAbilityId = abilityId;
-      gameState.watchAd();
-    };
-
-    function handleAbilityPurchase(ability) {
-      if (ability.id === 'shield') {
-        abilities.shield.purchased = true;
-        gameState.lives += 5;
-      } else {
-        ability.owned = true;
-      }
-      saveGame();
-      renderAbilities();
-      document.getElementById('shop-coins-display').textContent = gameState.coins;
-    }
-
-    function activateWingman() {
-      if (abilities.wingman.timer > 0) return;
-      
-      abilities.wingman.timer = abilities.wingman.duration;
-      abilities.wingman.active = true;
-      
-      const wingmanBtn = document.getElementById('wingman-btn');
-      wingmanBtn.style.display = 'block';
-      
-      let timeLeft = Math.ceil(abilities.wingman.duration / 1000);
-      const updateTimer = setInterval(() => {
-        timeLeft--;
-        wingmanBtn.textContent = timeLeft + 's';
-        
-        if (timeLeft <= 0) {
-          clearInterval(updateTimer);
-          abilities.wingman.timer = 0;
-          abilities.wingman.active = false;
-          wingmanBtn.style.display = 'none';
-        }
-      }, 1000);
-      
-      gameState.wingmanInterval = updateTimer;
-    };
-
-    // === SHIPS DATABASE ===
-    const ships = [
-      {
-        id: 'delta',
-        name: 'DELTA',
-        price: 0,
-        owned: true,
-        color: '#06b6d4',
-        premium: false,
-        svg: '<svg width="48" height="56" viewBox="0 0 48 56"><polygon points="24,0 4,50 24,40 44,50" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1.5"/><polygon points="24,12 14,44 24,36 34,44" fill="#0e7490"/><circle cx="24" cy="28" r="4" fill="#a5f3fc" opacity="0.8"/><rect x="10" y="48" width="6" height="8" rx="2" fill="#f97316" opacity="0.8"/><rect x="32" y="48" width="6" height="8" rx="2" fill="#f97316" opacity="0.8"/></svg>'
-      },
-      {
-        id: 'viper',
-        name: 'VIPER',
-        price: 500,
-        owned: false,
-        color: '#f43f5e',
-        premium: false,
-        svg: '<svg width="48" height="56" viewBox="0 0 48 56"><polygon points="24,8 8,56 24,40 40,56" fill="#f43f5e" stroke="#fda4af" stroke-width="1.5"/><polygon points="24,16 14,48 24,36 34,48" fill="#be123c"/><circle cx="18" cy="24" r="3" fill="#fda4af"/><circle cx="30" cy="24" r="3" fill="#fda4af"/><rect x="12" y="48" width="8" height="6" rx="2" fill="#f59e0b"/><rect x="28" y="48" width="8" height="6" rx="2" fill="#f59e0b"/></svg>'
-      },
-      {
-        id: 'phantom',
-        name: 'PHANTOM',
-        price: 800,
-        owned: false,
-        color: '#a855f7',
-        premium: false,
-        svg: '<svg width="48" height="56" viewBox="0 0 48 56"><polygon points="24,4 2,48 24,38 46,48" fill="#a855f7" stroke="#e9d5ff" stroke-width="1.5"/><polygon points="24,12 12,44 24,34 36,44" fill="#7e22ce"/><rect x="8" y="20" width="8" height="20" rx="3" fill="#e9d5ff" opacity="0.4"/><rect x="32" y="20" width="8" height="20" rx="3" fill="#e9d5ff" opacity="0.4"/><circle cx="24" cy="28" r="5" fill="#e9d5ff" opacity="0.6"/></svg>'
-      },
-      {
-        id: 'inferno',
-        name: 'INFERNO',
-        price: 1200,
-        owned: false,
-        color: '#f97316',
-        premium: false,
-        svg: '<svg width="48" height="56" viewBox="0 0 48 56"><polygon points="24,2 6,52 24,40 42,52" fill="#f97316" stroke="#fed7aa" stroke-width="1.5"/><polygon points="24,10 14,46 24,36 34,46" fill="#c2410c"/><circle cx="24" cy="26" r="5" fill="#fed7aa" opacity="0.8"/><path d="M 18 35 Q 18 40 24 42 Q 30 40 30 35" fill="#f59e0b" opacity="0.6"/><rect x="10" y="48" width="6" height="6" rx="2" fill="#fff7ed" opacity="0.7"/><rect x="32" y="48" width="6" height="6" rx="2" fill="#fff7ed" opacity="0.7"/></svg>'
-      },
-      {
-        id: 'aurora',
-        name: 'AURORA ✨',
-        price: 2500,
-        owned: false,
-        color: '#10b981',
-        premium: true,
-        svg: '<svg width="48" height="56" viewBox="0 0 48 56"><defs><linearGradient id="auroraGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#10b981;stop-opacity:1"/><stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1"/></linearGradient></defs><polygon points="24,0 4,50 24,40 44,50" fill="url(#auroraGrad)" stroke="#a7f3d0" stroke-width="2"/><polygon points="24,12 14,44 24,36 34,44" fill="#059669"/><circle cx="24" cy="28" r="4" fill="#a7f3d0" opacity="1"/><circle cx="24" cy="28" r="8" fill="none" stroke="#a7f3d0" stroke-width="1" opacity="0.6"/><rect x="10" y="48" width="6" height="8" rx="2" fill="#fbbf24"/><rect x="32" y="48" width="6" height="8" rx="2" fill="#fbbf24"/></svg>'
-      },
-      {
-        id: 'celestial',
-        name: 'CELESTIAL ✨',
-        price: 3000,
-        owned: false,
-        color: '#8b5cf6',
-        premium: true,
-        svg: '<svg width="48" height="56" viewBox="0 0 48 56"><defs><linearGradient id="celestialGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1"/><stop offset="100%" style="stop-color:#ec4899;stop-opacity:1"/></linearGradient></defs><polygon points="24,0 4,50 24,40 44,50" fill="url(#celestialGrad)" stroke="#e9d5ff" stroke-width="2"/><polygon points="24,12 14,44 24,36 34,44" fill="#6d28d9"/><circle cx="24" cy="28" r="5" fill="#e9d5ff" opacity="1"/><circle cx="24" cy="28" r="10" fill="none" stroke="#e9d5ff" stroke-width="1.5" opacity="0.5"/></svg>'
-      }
-    ];
-
-    // === UPGRADES DATABASE ===
-    const upgrades = {
-      bulletSpeed: { level: 0, cost: 50, maxLevel: 5, costMultiplier: 1.5 },
-      fireRate: { level: 0, cost: 75, maxLevel: 5, costMultiplier: 1.5 },
-      damage: { level: 0, cost: 100, maxLevel: 5, costMultiplier: 1.5 },
-      maxHealth: { level: 0, cost: 150, maxLevel: 5, costMultiplier: 1.5 },
-      shield: { level: 0, cost: 200, maxLevel: 3, costMultiplier: 2 },
-      dualShot: { level: 0, cost: 300, maxLevel: 1, costMultiplier: 1 }
-    };
-
-    // === INIT STARFIELD ===
-    function initStarfield() {
-      const canvas = document.getElementById('starfield');
-      const ctx = canvas.getContext('2d');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      
-      const stars = [];
-      for (let i = 0; i < 120; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 1.5 + 0.3,
-          speed: Math.random() * 1.5 + 0.3
-        });
-      }
-      
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#fff';
-        for (const s of stars) {
-          ctx.globalAlpha = Math.random() * 0.4 + 0.4;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fill();
-          s.y += s.speed;
-          if (s.y > canvas.height) {
-            s.y = -2;
-            s.x = Math.random() * canvas.width;
-          }
-        }
-        ctx.globalAlpha = 1;
-        requestAnimationFrame(draw);
-      }
-      draw();
-    }
-
-    // === ELEMENT SDK ===
-    const defaultConfig = { game_title: 'SPACE SHOOTER' };
-    window.elementSdk.init({
-      defaultConfig,
-      onConfigChange: async (cfg) => {
-        document.getElementById('title-text').textContent = (cfg.game_title || defaultConfig.game_title).toUpperCase();
-        document.getElementById('game-title-hud').textContent = (cfg.game_title || defaultConfig.game_title).toUpperCase();
-        document.title = cfg.game_title || defaultConfig.game_title;
-      },
-      mapToCapabilities: (cfg) => ({
-        recolorables: [],
-        borderables: [],
-        fontEditable: undefined,
-        fontSizeable: undefined
-      }),
-      mapToEditPanelValues: (cfg) => new Map([['game_title', cfg.game_title || defaultConfig.game_title]])
-    });
-
-    // === LOAD/SAVE ===
-    function loadGame() {
-      const saved = localStorage.getItem('shipUpgrades');
-      if (saved) {
-        try {
-          const data = JSON.parse(saved);
-          Object.assign(upgrades, data);
-        } catch (e) {}
-      }
-      const coins = localStorage.getItem('playerCoins');
-      if (coins) gameState.coins = parseInt(coins, 10);
-      const ship = localStorage.getItem('currentShip');
-      if (ship) gameState.currentShipId = ship;
-      const ownedShips = localStorage.getItem('ownedShips');
-      if (ownedShips) {
-        try {
-          JSON.parse(ownedShips).forEach(id => {
-            const s = ships.find(x => x.id === id);
-            if (s) s.owned = true;
-          });
-        } catch (e) {}
-      }
-      const ownedAbilities = localStorage.getItem('ownedAbilities');
-      if (ownedAbilities) {
-        try {
-          JSON.parse(ownedAbilities).forEach(id => {
-            if (abilities[id]) abilities[id].owned = true;
-          });
-        } catch (e) {}
-      }
-      const shieldPurchased = localStorage.getItem('shieldPurchased');
-      if (shieldPurchased === 'true') {
-        abilities.shield.purchased = true;
-        gameState.lives += 5;
-      }
-    }
-
-    function saveGame() {
-      localStorage.setItem('shipUpgrades', JSON.stringify(upgrades));
-      localStorage.setItem('playerCoins', gameState.coins.toString());
-      localStorage.setItem('currentShip', gameState.currentShipId);
-      localStorage.setItem('ownedShips', JSON.stringify(ships.filter(s => s.owned).map(s => s.id)));
-      localStorage.setItem('ownedAbilities', JSON.stringify(Object.keys(abilities).filter(key => abilities[key].owned)));
-      localStorage.setItem('shieldPurchased', abilities.shield.purchased.toString());
-    }
-
-  <script>
-    // 1. DECLARAÇÃO PRIORITÁRIA (Sempre no topo do script)
-    // Isso evita o erro de "not defined" no console
+  <script>
     window.gameState = {
         coins: 0,
+        init: function() {
+            const saved = localStorage.getItem('kv_enterprise_coins');
+            if (saved) this.coins = parseInt(saved);
+            this.updateDisplay();
+            console.log("SISTEMA: Protocolos de memória carregados.");
+        },
+        updateDisplay: function() {
+            const el = document.getElementById('user-coins');
+            if (el) el.textContent = this.coins.toLocaleString();
+        },
         watchAd: function() {
-            console.log("Iniciando Protocolo de Recompensa...");
-            
+            console.log("Iniciando requisição de Ad...");
             if (!window.CrazyGames || !window.CrazyGames.SDK) {
-                console.error("SDK da CrazyGames não detectado.");
-                alert("Erro: SDK não carregado. Verifique se há bloqueadores de anúncios ativos.");
+                alert("Erro: SDK da CrazyGames não carregado.");
                 return;
             }
-
-            const crazySDK = window.CrazyGames.SDK;
-            
-            crazySDK.ad.requestAd('rewarded', {
+            const sdk = window.CrazyGames.SDK;
+            sdk.ad.requestAd('rewarded', {
                 adFinished: () => {
                     this.coins += 1000;
                     localStorage.setItem('kv_enterprise_coins', this.coins);
-                    updateCoinDisplay();
-                    alert("Sincronização completa: +1.000 Créditos.");
+                    this.updateDisplay();
+                    alert("PROTOCOL_SUCCESS: +1.000 Créditos.");
                 },
                 adError: (error) => {
-                    console.error("Erro no Ad:", error);
-                    alert("Não foi possível carregar o anúncio no momento.");
+                    console.error("Erro no SDK:", error);
+                    alert("Anúncio indisponível fora do portal CrazyGames.");
                 }
             });
         }
     };
+  </script>
+ </head>
 
-    // 2. INICIALIZAÇÃO DO SISTEMA
-    window.onload = async () => {
-        // Carregar moedas do Storage
-        const saved = localStorage.getItem('kv_enterprise_coins');
-        if (saved) {
-            window.gameState.coins = parseInt(saved);
-            updateCoinDisplay();
-        }
-        
-        // Log de diagnóstico para o seu terminal
-        console.log("VISUAL_STUDIO_GAMES: System ready.");
+ <body class="h-full flex flex-col overflow-auto">
+  <header class="p-8 border-b border-white/5 flex justify-between items-end flex-wrap gap-4">
+   <div>
+    <h1 class="orbitron text-4xl font-black tracking-tighter text-white uppercase">Visual Studio <span class="text-[#ff4655]">Games</span></h1>
+    <p class="text-gray-500 text-xs tracking-[0.3em] uppercase mt-1">Experimental Development Unit // 2026</p>
+   </div>
+   <div class="flex flex-col items-end gap-1">
+    <div class="flex items-center gap-2">
+        <div class="status-dot bg-green-500"></div><span class="mono text-[10px] text-green-500 uppercase">System Online</span>
+    </div>
+    <div class="orbitron text-amber-500 text-sm font-bold">
+        <span id="user-coins">0</span> <span class="text-[10px]">CRÉDITOS</span>
+    </div>
+   </div>
+  </header>
+
+  <main class="flex-grow max-w-6xl mx-auto w-full p-8 grid md:grid-cols-2 gap-12 items-start">
+   <div class="space-y-6">
+    <h2 class="orbitron text-sm font-bold text-gray-400 mb-8 flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4"></i> PROTOCOLOS ATIVOS</h2>
+    
+    <div class="game-card p-6 rounded-r-lg group">
+     <div class="flex justify-between items-start mb-4">
+      <h3 class="orbitron text-xl font-bold text-pink-500 uppercase">Color Crush</h3>
+      <span class="text-[10px] bg-pink-500/20 text-pink-500 px-2 py-1 font-bold italic uppercase">Puzzle</span>
+     </div>
+     <p class="text-gray-400 text-sm mb-6">Elimine blocos e alcance combos massivos em alta performance.</p>
+     <a href="color-crush.html" class="btn-play" style="background: linear-gradient(to right, #ec4899, #a855f7);">EXECUTE_CRUSH</a>
+    </div>
+
+    <div class="game-card p-6 rounded-r-lg group">
+     <div class="flex justify-between items-start mb-4">
+      <h3 class="orbitron text-xl font-bold text-red-500 uppercase">Valoranto</h3>
+      <span class="text-[10px] bg-red-500/20 text-red-500 px-2 py-1 font-bold italic uppercase">Strategy</span>
+     </div>
+     <p class="text-gray-400 text-sm mb-6">Adivinhe agentes, mapas e armas do universo Valorant.</p>
+     <a href="valoranto.html" class="btn-play">LAUNCH_GAME</a>
+    </div>
+
+    <div class="game-card p-6 rounded-r-lg group border-dashed border-white/10 bg-transparent">
+     <div class="flex justify-between items-start mb-4">
+      <h3 class="orbitron text-xl font-bold text-cyan-400 uppercase">Graffiti</h3>
+      <span class="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-1 font-bold italic uppercase">Creative</span>
+     </div>
+     <p class="text-gray-400 text-sm mb-6">Ferramenta de design interativo com spray neon e suporte mobile.</p>
+     <a href="graffiti.html" class="btn-play" style="background: #00f2ff; color: #000;">OPEN_STUDIO</a>
+    </div>
+
+    <div class="game-card p-6 rounded-r-lg group">
+     <div class="flex justify-between items-start mb-4">
+      <h3 class="orbitron text-xl font-bold text-green-400 uppercase">Neon_Snaker</h3>
+      <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 font-bold italic uppercase">Retro</span>
+     </div>
+     <p class="text-gray-400 text-sm mb-6">O clássico reimaginado com estética terminal ciberespaço.</p>
+     <a href="snake-neon.html" class="btn-play" style="background: linear-gradient(to right, #22c55e, #10b981);">EXECUTE_NEON</a>
+    </div>
+
+    <div class="game-card p-6 rounded-r-lg group">
+     <div class="flex justify-between items-start mb-4">
+      <h3 class="orbitron text-xl font-bold text-yellow-400 uppercase">Space Shooter</h3>
+      <span class="text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-1 font-bold italic uppercase">Action</span>
+     </div>
+     <p class="text-gray-400 text-sm mb-6">Destrua naves inimigas e desbloqueie upgrades premium.</p>
+     <a href="space-shooter.html" class="btn-play" style="background: linear-gradient(to right, #fbbf24, #f59e0b);">LAUNCH_SHOOTER</a>
+    </div>
+   </div>
+
+   <div class="space-y-6">
+    <h2 class="orbitron text-sm font-bold text-gray-400 mb-8 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4"></i> TERMINAL</h2>
+    <div class="game-card p-6 rounded-r-lg">
+     <div class="mono text-xs space-y-2 text-gray-500">
+      <p class="terminal-line">&gt; initializing visual_studio_games...</p>
+      <p class="terminal-line">&gt; crazygames_sdk: <span class="text-cyan-400">v3.0_ready</span></p>
+      <p class="terminal-line">&gt; operator: <span class="text-white">Guilherme Kovaliosky</span></p>
+      <p class="terminal-line">&gt; status: <span class="text-green-400">READY_FOR_DEPLOY</span></p>
+     </div>
+    </div>
+
+    <div class="game-card p-6 rounded-r-lg border border-amber-500/30 bg-amber-500/5">
+        <h3 class="orbitron text-[10px] font-bold text-amber-500 mb-4 tracking-widest uppercase">Funding Protocol</h3>
+        <p class="text-gray-400 text-xs mb-4">Sincronize anúncios para injetar 1.000 créditos na conta.</p>
+        <button onclick="window.gameState.watchAd()" class="btn-play w-full text-center" style="background: #f59e0b; clip-path: none; color: black;">GET_1000_CREDITS</button>
+    </div>
+   </div>
+  </main>
+
+  <footer class="p-6 border-t border-white/5 text-center">
+   <p class="mono text-[10px] text-gray-600">© 2026 VISUAL_STUDIO_GAMES // KV'S ENTERPRISE // RONDÔNIA_BRAZIL</p>
+  </footer>
+
+  <script>
+    window.onload = () => {
+        window.gameState.init();
+        lucide.createIcons();
+        document.querySelectorAll('.terminal-line').forEach((el, i) => {
+            el.style.animationDelay = `${(i + 1) * 0.2}s`;
+        });
     };
-
-    function updateCoinDisplay() {
-        const el = document.getElementById('user-coins');
-        if (el) el.textContent = window.gameState.coins.toLocaleString();
-    }
-
-    // Mantém suas outras funções (lucide, applyConfig, etc) abaixo daqui...
-</script>
-        if (ship.premium) {
-          card.classList.add('premium-border');
-          card.style.borderWidth = '3px';
-        }
-        
-        if (ship.owned && ship.id === gameState.currentShipId) {
-          card.style.borderColor = ship.color;
-          card.style.background = 'linear-gradient(135deg, #1e293b, #334155)';
-          card.style.boxShadow = `0 0 20px ${ship.color}40`;
-        } else if (ship.owned) {
-          card.style.borderColor = ship.color;
-          card.style.opacity = '0.7';
-        }
-        
-        const shipDisplay = ship.premium ? `<div class="premium-glow" style="display:inline-block;">${ship.svg}</div>` : ship.svg;
-        
-        const premiumBadge = ship.premium ? '<span style="color: #fbbf24; font-size: 12px; margin-top: 4px; display: block; animation: pulse 1.5s ease-in-out infinite;">✨ PREMIUM ✨</span>' : '';
-        
-        card.innerHTML = `
-          <div class="mb-3">${shipDisplay}</div>
-          <h3 class="font-black text-sm m-0 mb-1" style="color: ${ship.color};">${ship.name}</h3>
-          ${premiumBadge}
-          <p class="text-slate-400 text-xs m-0">${ship.owned ? (ship.id === gameState.currentShipId ? '✓ EQUIPPED' : '✓ UNLOCKED') : `⭐ ${ship.price}`}</p>
-        `;
-        
-        card.onclick = () => {
-          if (!ship.owned) {
-            if (gameState.coins >= ship.price) {
-              gameState.coins -= ship.price;
-  
-
-
-
-
+  </script>
+ </body>
+</html>
 
 
 

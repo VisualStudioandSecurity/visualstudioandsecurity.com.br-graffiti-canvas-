@@ -6114,7 +6114,47 @@
      </div>
     </div>
    </div>
-  </div>
+  </div>// Movimento do Jogador
+window.addEventListener('mousemove', (e) => {
+    if (!gameState.running) return;
+    gameState.playerX = e.clientX - 24;
+    gameState.playerY = e.clientY - 28;
+    
+    // Suavização do movimento
+    const speed = 0.2 * gameState.playerSpeed;
+    gameState.player.style.left = `${gameState.playerX}px`;
+    gameState.player.style.top = `${gameState.playerY}px`;
+});
+
+// Mecânica de Tiro
+window.addEventListener('mousedown', () => {
+    if (!gameState.running) return;
+    
+    const now = Date.now();
+    const cooldown = 300 / (1 + upgrades.fireRate.level * 0.2);
+    
+    if (now - gameState.lastShotTime > cooldown) {
+        fireBullet();
+        gameState.lastShotTime = now;
+    }
+});
+
+function fireBullet() {
+    const b = document.createElement('div');
+    b.className = 'bullet';
+    const bulletX = gameState.playerX + 22;
+    const bulletY = gameState.playerY;
+    
+    b.style.left = `${bulletX}px`;
+    b.style.top = `${bulletY}px`;
+    document.getElementById('game-container').appendChild(b);
+    
+    gameState.bullets.push({
+        x: bulletX,
+        y: bulletY,
+        el: b
+    });
+}
   <script>
     // === GAME STATE & CONFIG ===
     const gameState = window.gameState = {

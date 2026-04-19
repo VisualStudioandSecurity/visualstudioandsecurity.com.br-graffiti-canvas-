@@ -31594,7 +31594,69 @@
 </div>
     </main>
 
-    <script>lucide.createIcons();</script>
+    <script>lucide.createIcons();</
+                                  // Garante que o objeto global do jogo exista
+window.gameState = window.gameState || { coins: 0 };
+
+// Inicia a exibição do anúncio
+gameState.watchAd = function() {
+    const adScreen = document.getElementById('ad-screen');
+    const timerDisplay = document.getElementById('ad-timer');
+    const closeBtn = document.getElementById('close-ad-btn');
+    const skipBtn = document.getElementById('skip-ad-btn');
+    
+    let timeLeft = 30; // Tempo em segundos
+    
+    // Reset da Interface
+    adScreen.classList.remove('hidden');
+    closeBtn.classList.add('hidden');
+    skipBtn.classList.remove('hidden');
+    timerDisplay.classList.remove('text-green-400');
+    timerDisplay.textContent = timeLeft;
+
+    // Loop do Cronômetro
+    if(gameState.adTimerInterval) clearInterval(gameState.adTimerInterval);
+    
+    gameState.adTimerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(gameState.adTimerInterval);
+            timerDisplay.textContent = "READY";
+            timerDisplay.classList.add('text-green-400');
+            
+            // Habilita o botão final e remove o skip
+            closeBtn.classList.remove('hidden');
+            skipBtn.classList.add('hidden');
+        }
+    }, 1000);
+};
+
+// Cancela sem dar moedas
+gameState.skipAd = function() {
+    clearInterval(gameState.adTimerInterval);
+    document.getElementById('ad-screen').classList.add('hidden');
+    console.warn("AD_LOG: Protocolo interrompido pelo usuário.");
+};
+
+// Fecha e entrega a recompensa
+gameState.closeAdScreen = function() {
+    // 1. Adiciona o valor
+    gameState.coins += 1000;
+    
+    // 2. Persistência (Kv's Enterprise Protocol)
+    if (typeof saveGame === 'function') saveGame();
+    
+    // 3. Log de Segurança
+    console.log(`%c [SUCCESS] +1000 coins added. New Balance: ${gameState.coins}`, "color: #22c55e; font-weight: bold;");
+
+    // 4. Fecha a tela
+    document.getElementById('ad-screen').classList.add('hidden');
+    
+    // Feedback visual opcional
+    alert("CRÉDITOS RESGATADOS COM SUCESSO!");
+};script>
  <div id="ad-screen" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-[#0f1923]/95 backdrop-blur-sm">
     <div class="bg-[#1a2a3a] border-2 border-amber-500 p-8 rounded-lg max-w-sm w-full text-center shadow-[0_0_50px_rgba(245,158,11,0.2)] relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/5 to-transparent animate-pulse pointer-events-none"></div>

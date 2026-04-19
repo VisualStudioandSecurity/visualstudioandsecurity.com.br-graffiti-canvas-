@@ -31474,101 +31474,85 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!doctype html>
 <html lang="pt-BR" class="h-full">
  <head>
   <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visual Studio Games | Kv's Enterprise</title>
+  <title>Visual Studio Games</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-    :root { --valorant-red: #ff4655; }
+
+    :root {
+      --valorant-red: #ff4655;
+    }
+
     .orbitron { font-family: 'Orbitron', sans-serif; }
     .mono { font-family: 'Courier New', monospace; }
-    body { background: #0f1923; color: #e5e7eb; margin: 0; }
-    .game-card { border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
-    .game-card:hover { border-color: var(--valorant-red); background: rgba(0, 0, 0, 0.5); }
-    .btn-play { background: var(--valorant-red); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); transition: 0.3s; display: inline-block; padding: 8px 32px; font-size: 14px; font-weight: 900; font-style: italic; color: white; text-decoration: none; cursor: pointer; border: none; }
-    .btn-play:hover { filter: brightness(1.2); padding-right: 48px; }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; animation: pulse-dot 2s infinite; }
-    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-    .terminal-line { opacity: 0; animation: type-in 0.5s ease forwards; }
-    @keyframes type-in { to { opacity: 1; } }
+
+    body {
+      background: #0f1923;
+      color: #e5e7eb;
+      box-sizing: border-box;
+    }
+
+    .game-card {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    .game-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-play {
+      background: var(--valorant-red);
+      clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+      transition: 0.3s;
+      display: inline-block;
+      padding: 8px 32px;
+      font-size: 14px;
+      font-weight: 900;
+      font-style: italic;
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-play:hover {
+      filter: brightness(1.2);
+      padding-right: 48px;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .terminal-line {
+      animation: type-in 0.5s ease forwards;
+      opacity: 0;
+    }
+    @keyframes type-in {
+      to { opacity: 1; }
+    }
   </style>
-
-  <script>
-    // ENGINE DE ESTADO GLOBAL
-    window.gameState = {
-        coins: 0,
-        init: function() {
-            const saved = localStorage.getItem('kv_enterprise_coins');
-            if (saved) this.coins = parseInt(saved);
-            this.updateDisplay();
-            console.log("SISTEMA: Memória carregada com sucesso.");
-        },
-        updateDisplay: function() {
-            const el = document.getElementById('user-coins');
-            if (el) el.textContent = this.coins.toLocaleString();
-        },
-        watchAd: function() {
-            console.log("Iniciando requisição de Ad...");
-            if (!window.CrazyGames || !window.CrazyGames.SDK) {
-                alert("Erro: SDK da CrazyGames não carregado. Verifique AdBlockers.");
-                return;
-            }
-            const sdk = window.CrazyGames.SDK;
-            sdk.ad.requestAd('rewarded', {
-                adFinished: () => {
-                    this.coins += 1000;
-                    localStorage.setItem('kv_enterprise_coins', this.coins);
-                    this.updateDisplay();
-                    alert("PROTOCOL_SUCCESS: +1.000 Créditos.");
-                },
-                adError: (error) => {
-                    console.error("Erro no SDK:", error);
-                    alert("Anúncio não disponível fora do portal oficial.");
-                }
-            });
-        }
-    };
-  </script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
-
  <body class="h-full flex flex-col overflow-auto">
   <header class="p-8 border-b border-white/5 flex justify-between items-end flex-wrap gap-4">
    <div>
-    <h1 class="orbitron text-4xl font-black tracking-tighter text-white uppercase">Visual Studio <span class="text-[#ff4655]">Games</span></h1>
-    <p class="text-gray-500 text-xs tracking-[0.3em] uppercase mt-1">Experimental Development Unit // 2026</p>
+    <h1 id="site-title" class="orbitron text-4xl font-black tracking-tighter text-white">VISUAL STUDIO <span class="text-[#ff4655]">GAMES</span></h1>
+    <p id="site-subtitle" class="text-gray-500 text-xs tracking-[0.3em] uppercase mt-1">Experimental Development Unit // 2026</p>
    </div>
    <div class="flex flex-col items-end gap-1">
     <div class="flex items-center gap-2">
@@ -31586,54 +31570,171 @@
     
     <div class="game-card p-6 rounded-r-lg group">
      <div class="flex justify-between items-start mb-4">
-      <h3 class="orbitron text-xl font-bold text-yellow-400">SPACE SHOOTER</h3>
-      <span class="text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-1 font-bold italic uppercase">Ação</span>
+      <h3 class="orbitron text-xl font-bold text-pink-500">COLOR CRUSH</h3><span class="text-[10px] bg-pink-500/20 text-pink-500 px-2 py-1 font-bold italic">ARCADE / MATCH-3</span>
      </div>
-     <p class="text-gray-400 text-sm mb-6">Defesa orbital ativa. Destrua frotas inimigas.</p>
-     <a href="space-shooter.html" class="btn-play" style="background: linear-gradient(to right, #fbbf24, #f59e0b);">LAUNCH_SHOOTER</a>
+     <p class="text-gray-400 text-sm mb-6">Elimine grupos de blocos e alcance combos massivos neste puzzle explosivo de alta performance.</p>
+     <a href="color-crush.html" class="btn-play" style="background: linear-gradient(to right, #ec4899, #a855f7);">EXECUTE_CRUSH</a>
     </div>
 
     <div class="game-card p-6 rounded-r-lg group">
      <div class="flex justify-between items-start mb-4">
-      <h3 class="orbitron text-xl font-bold text-green-400">NEON_SNAKER</h3>
-      <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 font-bold italic uppercase">Retro</span>
+      <h3 class="orbitron text-xl font-bold">VALORANTO</h3><span class="text-[10px] bg-red-500/20 text-red-500 px-2 py-1 font-bold italic">STRATEGY / WORDLE</span>
      </div>
-     <p class="text-gray-400 text-sm mb-6">Colete pacotes de dados. Verifique links 404.</p>
-     <a href="snake-neon.html" class="btn-play" style="background: linear-gradient(to right, #22c55e, #10b981);">EXECUTE_NEON</a>
+     <p class="text-gray-400 text-sm mb-6">Teste seus conhecimentos táticos. Adivinhe agentes, mapas e armas do universo Valorant.</p>
+     <a href="valoranto.html" class="btn-play">LAUNCH_GAME</a>
+    </div>
+
+    <div class="game-card p-6 rounded-r-lg group">
+     <div class="flex justify-between items-start mb-4">
+      <h3 class="orbitron text-xl font-bold text-yellow-400">SPACE SHOOTER</h3><span class="text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-1 font-bold italic">ACTION / ARCADE</span>
+     </div>
+     <p class="text-gray-400 text-sm mb-6">Voe entre asteroides e destrua inimigos. Desbloqueie naves premium com suas moedas.</p>
+     <a href="space-shooter.html" class="btn-play" style="background: linear-gradient(to right, #fbbf24, #f59e0b);">LAUNCH_SHOOTER</a>
     </div>
    </div>
 
    <div class="space-y-6">
-    <h2 class="orbitron text-sm font-bold text-gray-400 mb-8 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4"></i> TERMINAL</h2>
+    <h2 class="orbitron text-sm font-bold text-gray-400 mb-8 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4"></i> TERMINAL DE ACESSO</h2>
+    
     <div class="game-card p-6 rounded-r-lg">
      <div class="mono text-xs space-y-2 text-gray-500">
-      <p class="terminal-line">&gt; initializing...</p>
-      <p class="terminal-line">&gt; crazygames_sdk: <span class="text-cyan-400">v3.0_ready</span></p>
-      <p class="terminal-line">&gt; operator: <span class="text-white">Guilherme Kovaliosky</span></p>
-      <p class="terminal-line">&gt; status: <span class="text-green-400">ONLINE</span></p>
+      <p class="terminal-line">&gt; initializing visual_studio_games...</p>
+      <p class="terminal-line">&gt; loading protocols: <span class="text-green-400">active</span></p>
+      <p class="terminal-line">&gt; crazygames_sdk: <span class="text-cyan-400 text-[10px]">v3.0_ready</span></p>
+      <p class="terminal-line">&gt; awaiting user input...<span class="inline-block w-2 h-4 bg-white/70 ml-1 animate-pulse"></span></p>
      </div>
     </div>
 
     <div class="game-card p-6 rounded-r-lg border border-amber-500/30 bg-amber-500/5">
-        <h3 class="orbitron text-[10px] font-bold text-amber-500 mb-4 tracking-widest uppercase">Funding Protocol</h3>
-        <p class="text-gray-400 text-xs mb-4">Sincronize anúncios para injetar créditos.</p>
-        <button onclick="window.gameState.watchAd()" class="btn-play w-full text-center" style="background: #f59e0b; clip-path: none; color: black;">GET_1000_CREDITS</button>
+        <h3 class="orbitron text-[10px] font-bold text-amber-500 mb-4 tracking-widest">FUNDING_PROTOCOL</h3>
+        <p class="text-gray-400 text-xs mb-4">Obtenha créditos extras assistindo a transmissões de segurança.</p>
+        <button onclick="gameState.watchAd()" class="btn-play w-full text-center" style="background: #f59e0b; clip-path: none; color: black;">GET_1000_CREDITS</button>
     </div>
    </div>
   </main>
 
   <footer class="p-6 border-t border-white/5 text-center">
-   <p class="mono text-[10px] text-gray-600">© 2026 VISUAL_STUDIO_GAMES // KV'S ENTERPRISE</p>
+   <p class="mono text-[10px] text-gray-600">© 2026 VISUAL_STUDIO_GAMES // KV'S ENTERPRISE // CRAZYGAMES_SDK_INTEGRATED</p>
   </footer>
 
   <script>
-    window.onload = () => {
-        window.gameState.init();
-        lucide.createIcons();
-        document.querySelectorAll('.terminal-line').forEach((el, i) => {
-            el.style.animationDelay = `${(i + 1) * 0.2}s`;
-        });
+   gameState.watchAd = function() {
+    console.log("Tentando iniciar Ad Protocol..."); // Se isso aparecer no console, o botão está OK.
+    
+    if (!window.CrazyGames || !window.CrazyGames.SDK) {
+        console.error("SDK não encontrado no objeto window!");
+        alert("Erro técnico: SDK não inicializado.");
+        return;
+    }
+
+    const crazySDK = window.CrazyGames.SDK;
+    
+    crazySDK.ad.requestAd('rewarded', {
+        adFinished: () => {
+            gameState.coins += 1000;
+            localStorage.setItem('kv_enterprise_coins', gameState.coins);
+            if (typeof updateCoinDisplay === 'function') updateCoinDisplay();
+            alert("RECOMPENSA SINCRONIZADA: +1.000 Créditos.");
+        },
+        adError: (error) => {
+            console.error("CrazyGames Ad Error:", error);
+            alert("O provedor de anúncios negou a requisição (comum fora do portal da CrazyGames).");
+        },
+        adStarted: () => console.log("Vídeo iniciado com sucesso.")
+    });
+};
+
+    window.onload = async () => {
+        // Inicializa CrazyGames
+        if (window.CrazyGames) {
+            crazySDK = window.CrazyGames.SDK;
+            console.log("SDK_STATUS: CrazyGames Loaded.");
+        }
+
+        // Carrega saldo salvo
+        const savedCoins = localStorage.getItem('kv_enterprise_coins');
+        if (savedCoins) {
+            gameState.coins = parseInt(savedCoins);
+            updateCoinDisplay();
+        }
     };
+
+    // 2. REWARD LOGIC (SDK CRAZYGAMES)
+    gameState.watchAd = function() {
+        if (!crazySDK) {
+            alert("SDK não carregado. Verifique a conexão.");
+            return;
+        }
+
+        const callbacks = {
+            beforeAd: () => { console.log("Ad Iniciado."); },
+            afterAd: () => { console.log("Ad Finalizado."); },
+            adFinished: () => {
+                // SUCESSO: ENTREGA AS MOEDAS
+                gameState.coins += 1000;
+                localStorage.setItem('kv_enterprise_coins', gameState.coins);
+                updateCoinDisplay();
+                alert("RECOMPENSA SINCRONIZADA: +1.000 Créditos.");
+            },
+            adError: (error) => {
+                console.error("Erro no Ad:", error);
+            },
+            adStarted: () => { console.log("Executando vídeo..."); }
+        };
+
+        crazySDK.ad.requestAd('rewarded', callbacks);
+    };
+
+    function updateCoinDisplay() {
+        const el = document.getElementById('user-coins');
+        if (el) el.textContent = gameState.coins.toLocaleString();
+    }
+
+    // 3. UI ANIMATIONS & LUCIDE
+    document.querySelectorAll('.terminal-line').forEach((el, i) => {
+      el.style.animationDelay = `${(i + 1) * 0.2}s`;
+    });
+    lucide.createIcons();
+
+    // 4. ELEMENT SDK (SEU CÓDIGO ORIGINAL)
+    const defaultConfig = {
+      site_title: 'VISUAL STUDIO GAMES',
+      site_subtitle: 'Experimental Development Unit // 2026',
+      accent_color: '#ff4655'
+    };
+
+    function applyConfig(config) {
+      const title = config.site_title || defaultConfig.site_title;
+      const parts = title.split(' ');
+      const last = parts.pop();
+      const titleEl = document.getElementById('site-title');
+      if (titleEl) {
+        titleEl.innerHTML = `${parts.join(' ')} <span style="color:${config.accent_color || defaultConfig.accent_color}">${last}</span>`;
+      }
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => { applyConfig(config); }
+      });
+    }
   </script>
  </body>
-</html>
+</html> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
